@@ -15,11 +15,13 @@ Future<void> main() async {
   final game = MoonlanderGame();
 
   runApp(
-    GameWidget(
-      game: game,
-      overlayBuilderMap: {
-        'pause': (context, MoonlanderGame game) => PauseMenu(game: game),
-      },
+    MaterialApp(
+      home: GameWidget(
+        game: game,
+        overlayBuilderMap: {
+          'pause': (context, MoonlanderGame game) => PauseMenu(game: game),
+        },
+      ),
     ),
   );
 }

@@ -12,13 +12,9 @@ class PauseMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => game.overlays.remove('pause'),
-      child: Container(
-        color: Colors.black.withOpacity(0.5),
-        width: double.infinity,
-        height: double.infinity,
-        child: Center(
+    return Stack(
+      children: [
+        Align(
           child: Container(
             width: 320,
             padding: const EdgeInsets.all(8),
@@ -40,6 +36,7 @@ class PauseMenu extends StatelessWidget {
                   onPressed: () => game.overlays.remove('pause'),
                   child: const Text('Resume'),
                 ),
+                Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
                   onPressed: () {
                     game.overlays.remove('pause');
@@ -47,6 +44,7 @@ class PauseMenu extends StatelessWidget {
                   },
                   child: const Text('Restart'),
                 ),
+                Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
                   onPressed: () {
                     game.overlays.remove('pause');
@@ -54,6 +52,7 @@ class PauseMenu extends StatelessWidget {
                   },
                   child: const Text('Levels'),
                 ),
+                Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
                   onPressed: () => game.overlays.remove('pause'),
                   child: const Text('Exit'),
@@ -62,7 +61,7 @@ class PauseMenu extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
