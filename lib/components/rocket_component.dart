@@ -24,4 +24,12 @@ class RocketComponent extends PositionComponent with Hitbox, Collidable {
     // Temporary render item
     renderHitboxes(canvas, paint: Paint()..color = Colors.white);
   }
+
+  final speed = 10;
+
+  @override
+  void update(double dt) {
+    position.y += speed * dt;
+    super.update(dt);
+  }
 }
