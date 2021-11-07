@@ -5,26 +5,18 @@ import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/main.dart';
 
-final pauseButtonSize = Vector2.all(50);
+final pauseButtonSize = Vector2(50, 25);
 
-class PauseComponent extends PositionComponent
+class PauseComponent extends SpriteComponent
     with Tappable, HasGameRef<MoonlanderGame> {
-  ///
-  PauseComponent({required Vector2 position})
-      : super(position: position, size: pauseButtonSize);
+  ///Position to show the button
+  PauseComponent({
+    required Vector2 position,
+    required Sprite sprite,
+  }) : super(position: position, size: pauseButtonSize, sprite: sprite);
 
   @override
   bool get isHud => true;
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-
-    canvas.drawRect(
-      position & size,
-      Paint()..color = Colors.white,
-    );
-  }
 
   @override
   bool onTapDown(TapDownInfo info) {
