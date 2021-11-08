@@ -52,6 +52,9 @@ class MoonlanderGame extends FlameGame
     }
   }
 
+  @override
+  bool get debugMode => kDebugMode;
+
   /// Restart the current level.
   void restart() {
     // TODO: Implement restart of current level.
