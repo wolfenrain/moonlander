@@ -74,65 +74,11 @@ class MoonlanderGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    final pausButton = await Sprite.load('PauseButton.png');
-    final pausButtonPressed = await Sprite.load('PauseButtonInvert.png');
-    const stepTime = .3;
-    final textureSize = Vector2(16, 24);
-    const frameCount = 2;
-    final idle = await loadSpriteAnimation(
-      'ship_animation_idle.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final left = await loadSpriteAnimation(
-      'ship_animation_left.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final right = await loadSpriteAnimation(
-      'ship_animation_right.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final farRight = await loadSpriteAnimation(
-      'ship_animation_far_right.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final farLeft = await loadSpriteAnimation(
-      'ship_animation_far_left.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final rocketAnimation = {
-      RocketState.idle: idle,
-      RocketState.left: left,
-      RocketState.right: right,
-      RocketState.farLeft: farLeft,
-      RocketState.farRight: farRight
-    };
-
     unawaited(
       add(
         RocketComponent(
           position: size / 2,
           size: Vector2(32, 48),
-          animation: rocketAnimation,
         ),
       ),
     );
@@ -140,8 +86,8 @@ class MoonlanderGame extends FlameGame
       add(
         PauseComponent(
           margin: const EdgeInsets.all(5),
-          sprite: pausButton,
-          spritePressed: pausButtonPressed,
+          sprite: await Sprite.load('PauseButton.png'),
+          spritePressed: await Sprite.load('PauseButtonInvert.png'),
           onPressed: () {
             if (overlays.isActive('pause')) {
               overlays.remove('pause');
@@ -152,13 +98,7 @@ class MoonlanderGame extends FlameGame
         ),
       ),
     );
-    //Only in debug mode, add 3s wait to simulate loading
-    /*if (kDebugMode) {
-      await Future<void>.delayed(const Duration(seconds: 3));
-    }
-    */
     overlays.addListener(onOverlayChanged);
-
     return super.onLoad();
   }
 }

@@ -37,13 +37,12 @@ enum RocketHeading {
 
 /// A component that renders the Rocket with the different states.
 class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
-    with Hitbox, Collidable, KeyboardHandler {
+    with Hitbox, Collidable, KeyboardHandler, HasGameRef {
   /// Create a new Rocket component at the given [position].
   RocketComponent({
     required Vector2 position,
     required Vector2 size,
-    required Map<RocketState, SpriteAnimation> animation,
-  }) : super(position: position, size: size, animations: animation);
+  }) : super(position: position, size: size, animations: {});
 
   var _heading = RocketHeading.idle;
   final _speed = 10;
@@ -53,6 +52,57 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    //Load all sprites and create the animation map
+    const stepTime = .3;
+    final textureSize = Vector2(16, 24);
+    const frameCount = 2;
+    final idle = await gameRef.loadSpriteAnimation(
+      'ship_animation_idle.png',
+      SpriteAnimationData.sequenced(
+        amount: frameCount,
+        stepTime: stepTime,
+        textureSize: textureSize,
+      ),
+    );
+    final left = await gameRef.loadSpriteAnimation(
+      'ship_animation_left.png',
+      SpriteAnimationData.sequenced(
+        amount: frameCount,
+        stepTime: stepTime,
+        textureSize: textureSize,
+      ),
+    );
+    final right = await gameRef.loadSpriteAnimation(
+      'ship_animation_right.png',
+      SpriteAnimationData.sequenced(
+        amount: frameCount,
+        stepTime: stepTime,
+        textureSize: textureSize,
+      ),
+    );
+    final farRight = await gameRef.loadSpriteAnimation(
+      'ship_animation_far_right.png',
+      SpriteAnimationData.sequenced(
+        amount: frameCount,
+        stepTime: stepTime,
+        textureSize: textureSize,
+      ),
+    );
+    final farLeft = await gameRef.loadSpriteAnimation(
+      'ship_animation_far_left.png',
+      SpriteAnimationData.sequenced(
+        amount: frameCount,
+        stepTime: stepTime,
+        textureSize: textureSize,
+      ),
+    );
+    animations = {
+      RocketState.idle: idle,
+      RocketState.left: left,
+      RocketState.right: right,
+      RocketState.farLeft: farLeft,
+      RocketState.farRight: farRight
+    };
     current = RocketState.idle;
     addHitbox(HitboxRectangle());
   }
