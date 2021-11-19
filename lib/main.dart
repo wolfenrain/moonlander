@@ -4,8 +4,10 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame/palette.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moonlander/components/circle_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
@@ -42,7 +44,11 @@ Future<void> main() async {
 
 /// This class encapulates the whole game.
 class MoonlanderGame extends FlameGame
-    with HasCollidables, HasTappableComponents, HasKeyboardHandlerComponents {
+    with
+        HasCollidables,
+        HasTappableComponents,
+        HasKeyboardHandlerComponents,
+        HasDraggableComponents {
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
     if (overlays.isActive('pause')) {
@@ -74,14 +80,26 @@ class MoonlanderGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
+    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+
+    final joystick = JoystickComponent(
+      knob: CircleComponent(radius: 20, paint: knobPaint),
+      background: CircleComponent(radius: 40, paint: backgroundPaint),
+      margin: const EdgeInsets.only(left: 40, bottom: 40),
+    );
+
     unawaited(
       add(
         RocketComponent(
           position: size / 2,
           size: Vector2(32, 48),
+          joystick: joystick,
         ),
       ),
     );
+    unawaited(add(joystick));
+
     unawaited(
       add(
         PauseComponent(
@@ -98,6 +116,7 @@ class MoonlanderGame extends FlameGame
         ),
       ),
     );
+
     overlays.addListener(onOverlayChanged);
     return super.onLoad();
   }

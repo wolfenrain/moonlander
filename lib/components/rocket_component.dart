@@ -2,8 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 /// Describes the render state of the [RocketComponent].
 enum RocketState {
@@ -37,12 +35,16 @@ enum RocketHeading {
 
 /// A component that renders the Rocket with the different states.
 class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
-    with Hitbox, Collidable, KeyboardHandler, HasGameRef {
+    with Hitbox, Collidable, HasGameRef {
   /// Create a new Rocket component at the given [position].
   RocketComponent({
     required Vector2 position,
     required Vector2 size,
+    required this.joystick,
   }) : super(position: position, size: size, animations: {});
+
+  /// Joystick that controls this rocket.
+  final JoystickComponent joystick;
 
   var _heading = RocketHeading.idle;
   final _speed = 10;
@@ -107,20 +109,6 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     addHitbox(HitboxRectangle());
   }
 
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (event is RawKeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
-        _heading = RocketHeading.left;
-      } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
-        _heading = RocketHeading.right;
-      } else {
-        _heading = RocketHeading.idle;
-      }
-    }
-    return true;
-  }
-
   // Place holder, later we need to animate based on speed in a given direction.
   void _setAnimationState() {
     switch (_heading) {
@@ -166,13 +154,27 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   @override
   void update(double dt) {
+    super.update(dt);
+
+    if (joystick.direction == JoystickDirection.left &&
+        _heading != RocketHeading.left) {
+      _heading = RocketHeading.left;
+      _animationTime = 0;
+    } else if (joystick.direction == JoystickDirection.right &&
+        _heading != RocketHeading.right) {
+      _heading = RocketHeading.right;
+      _animationTime = 0;
+    } else if (joystick.direction == JoystickDirection.idle &&
+        _heading != RocketHeading.idle) {
+      _heading = RocketHeading.idle;
+      _animationTime = 0;
+    }
+
     position.y += _speed * dt;
     _animationTime += dt;
     if (_animationTime >= _animationSpeed) {
       _setAnimationState();
       _animationTime = 0;
     }
-
-    super.update(dt);
   }
 }
