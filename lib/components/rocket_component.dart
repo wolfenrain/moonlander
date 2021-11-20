@@ -179,7 +179,9 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    debugTextPaint.render(canvas, 'V:$_velocity', Vector2(size.x, 0));
+    if (gameRef.debugMode) {
+      debugTextPaint.render(canvas, 'V:$_velocity', Vector2(size.x, 0));
+    }
   }
 
   @override
