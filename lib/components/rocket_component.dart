@@ -52,7 +52,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
-  final _gravity = Vector2(0, 5);
+  final _gravity = Vector2(0, 1);
 
   @override
   Future<void> onLoad() async {
