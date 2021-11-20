@@ -50,6 +50,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final _speed = 10;
   final _animationSpeed = .1;
   var _animationTime = 0.0;
+  final _velocity = Vector2.zero();
 
   @override
   Future<void> onLoad() async {
@@ -152,6 +153,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     }
   }
 
+  void _updateVelocity(double dt) {
+    //Get the direction of the vector2 and scale it with the speed and framerate
+    _velocity.add(joystick.delta.normalized() * (_speed * dt));
+    position.add(_velocity);
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
@@ -169,8 +176,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       _heading = RocketHeading.idle;
       _animationTime = 0;
     }
-
-    position.y += _speed * dt;
+    _updateVelocity(dt);
     _animationTime += dt;
     if (_animationTime >= _animationSpeed) {
       _setAnimationState();
