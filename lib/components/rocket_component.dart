@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/widgets.dart';
 
 /// Describes the render state of the [RocketComponent].
 enum RocketState {
@@ -51,6 +52,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
+  final _gravity = Vector2(0, 5);
 
   @override
   Future<void> onLoad() async {
@@ -166,8 +168,18 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   void _updateVelocity(double dt) {
     //Get the direction of the vector2 and scale it with the speed and framerate
-    _velocity.add(joystick.delta.normalized() * (_speed * dt));
-    position.add(_velocity);
+    if (!joystick.delta.isZero()) {
+      _velocity.add(joystick.delta.normalized() * (_speed * dt));
+    }
+    _velocity
+      ..add(_gravity.normalized() * dt)
+      ..clampScalar(-10, 10);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    debugTextPaint.render(canvas, 'V:$_velocity', Vector2(size.x, 0));
   }
 
   @override
@@ -189,6 +201,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       _animationTime = 0;
     }
     _updateVelocity(dt);
+    position.add(_velocity);
     _animationTime += dt;
     if (_animationTime >= _animationSpeed) {
       _setAnimationState();
