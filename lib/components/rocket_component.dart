@@ -117,10 +117,13 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (current != RocketState.idle) {
           if (current == RocketState.farLeft) {
             current = RocketState.left;
+            angle = radians(-7.5);
           } else if (current == RocketState.farRight) {
             current = RocketState.right;
+            angle = radians(7.5);
           } else {
             current = RocketState.idle;
+            angle = radians(0);
           }
         }
         break;
@@ -128,12 +131,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (current != RocketState.farLeft) {
           if (current == RocketState.farRight) {
             current = RocketState.right;
+            angle = radians(7.5);
           } else if (current == RocketState.right) {
             current = RocketState.idle;
+            angle = radians(0);
           } else if (current == RocketState.idle) {
             current = RocketState.left;
+            angle = radians(-7.5);
           } else {
             current = RocketState.farLeft;
+            angle = radians(-15);
           }
         }
         break;
@@ -141,12 +148,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (current != RocketState.farRight) {
           if (current == RocketState.farLeft) {
             current = RocketState.left;
+            angle = radians(-7.5);
           } else if (current == RocketState.left) {
             current = RocketState.idle;
+            angle = radians(0);
           } else if (current == RocketState.idle) {
             current = RocketState.right;
+            angle = radians(7.5);
           } else {
             current = RocketState.farRight;
+            angle = radians(15);
           }
         }
         break;
@@ -166,6 +177,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     if (joystick.direction == JoystickDirection.left &&
         _heading != RocketHeading.left) {
       _heading = RocketHeading.left;
+
       _animationTime = 0;
     } else if (joystick.direction == JoystickDirection.right &&
         _heading != RocketHeading.right) {
