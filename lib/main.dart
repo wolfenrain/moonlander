@@ -5,6 +5,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/components/circle_component.dart';
@@ -80,12 +81,21 @@ class MoonlanderGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
-
+    final image = await images.load('joystick.png');
+    final sheet = SpriteSheet.fromColumnsAndRows(
+      image: image,
+      columns: 6,
+      rows: 1,
+    );
     final joystick = JoystickComponent(
-      knob: CircleComponent(radius: 20, paint: knobPaint),
-      background: CircleComponent(radius: 40, paint: backgroundPaint),
+      knob: SpriteComponent(
+        sprite: sheet.getSpriteById(1),
+        size: Vector2.all(100),
+      ),
+      background: SpriteComponent(
+        sprite: sheet.getSpriteById(0),
+        size: Vector2.all(150),
+      ),
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
 

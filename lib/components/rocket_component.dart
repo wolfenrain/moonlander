@@ -47,7 +47,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final JoystickComponent joystick;
 
   var _heading = RocketHeading.idle;
-  final _speed = 10;
+  final _speed = 7;
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
