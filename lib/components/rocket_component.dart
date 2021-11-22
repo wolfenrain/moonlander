@@ -49,11 +49,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final JoystickComponent joystick;
 
   var _heading = RocketHeading.idle;
-  final _speed = 7;
+  final _speed = 5;
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
   final _gravity = Vector2(0, 1);
+  var _collision = false;
 
   @override
   Future<void> onLoad() async {
@@ -172,9 +173,11 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     if (!joystick.delta.isZero()) {
       _velocity.add(joystick.delta.normalized() * (_speed * dt));
     }
+    final gravityChange = _gravity.normalized() * (dt * 0.6);
     _velocity
-      ..add(_gravity.normalized() * dt)
-      ..clampScalar(-10, 10);
+      ..add(gravityChange)
+      ..clamp(
+          Vector2(-7, -4), Vector2(7, 4)); //TODO algin this to the device size?
   }
 
   @override
@@ -188,7 +191,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   @override
   void update(double dt) {
     super.update(dt);
-
+    if (_collision) return;
     if (joystick.direction == JoystickDirection.left &&
         _heading != RocketHeading.left) {
       _heading = RocketHeading.left;
@@ -215,7 +218,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     if (other is LineComponent) {
-      // TODO: Do something here with the velocity?
+      _velocity.scale(0); //Stop any movement
+      _collision = true;
     }
     super.onCollision(intersectionPoints, other);
   }
