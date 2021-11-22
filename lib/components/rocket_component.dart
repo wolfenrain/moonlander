@@ -3,6 +3,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/widgets.dart';
+import 'package:moonlander/components/line_component.dart';
 
 /// Describes the render state of the [RocketComponent].
 enum RocketState {
@@ -209,5 +210,13 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       _setAnimationState();
       _animationTime = 0;
     }
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+    if (other is LineComponent) {
+      // TODO: Do something here with the velocity?
+    }
+    super.onCollision(intersectionPoints, other);
   }
 }
