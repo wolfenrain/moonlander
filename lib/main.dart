@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
@@ -7,6 +8,7 @@ import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
@@ -85,16 +87,22 @@ class MoonlanderGame extends FlameGame
       columns: 6,
       rows: 1,
     );
+
+    ///Ensure our joystick knob is between 50 and 100 based on view height
+    ///Important its based on device size not viewport size
+    ///8.2 is the "magic" hud joystick factor... ;)
+    final knobSize = min(max(50, canvasSize.y / 8.2), 100).toDouble();
+
     final joystick = JoystickComponent(
       knob: SpriteComponent(
         sprite: sheet.getSpriteById(1),
-        size: Vector2.all(100),
+        size: Vector2.all(knobSize),
       ),
       background: SpriteComponent(
         sprite: sheet.getSpriteById(0),
-        size: Vector2.all(150),
+        size: Vector2.all(knobSize * 1.5),
       ),
-      margin: const EdgeInsets.only(left: 40, bottom: 40),
+      margin: const EdgeInsets.only(left: 10, bottom: 10),
     );
 
     unawaited(
@@ -107,6 +115,7 @@ class MoonlanderGame extends FlameGame
       ),
     );
     unawaited(add(joystick));
+    unawaited(add(MapComponent()));
 
     unawaited(
       add(

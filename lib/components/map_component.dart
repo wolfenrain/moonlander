@@ -9,7 +9,7 @@ import 'package:moonlander/main.dart';
 /// Map rendering component.
 class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   /// The workable grid sizes.
-  static final grid = Vector2(10, 5);
+  static final grid = Vector2(40, 30);
 
   /// Size of a single item in the [grid].
   Vector2 get size => gameRef.size.clone()..divide(grid);
@@ -28,7 +28,10 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
 
     final lines = [
       Vector2(0, 0),
-      Vector2(6, 1),
+      Vector2(1, 1),
+      Vector2(2, 1),
+      Vector2(3, 2),
+      Vector2(4, 2),
     ];
 
     for (var i = 1; i < lines.length; i++) {
