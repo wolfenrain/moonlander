@@ -52,8 +52,6 @@ class MoonlanderGame extends FlameGame
         HasTappableComponents,
         HasKeyboardHandlerComponents,
         HasDraggableComponents {
-  late final flameViewport.Viewport viewport;
-
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
     if (overlays.isActive('pause')) {
