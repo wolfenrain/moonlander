@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame/src/game/camera/viewport.dart' as flameViewport;
 import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
-import 'package:moonlander/viewport.dart';
+import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
 
 Future<void> main() async {

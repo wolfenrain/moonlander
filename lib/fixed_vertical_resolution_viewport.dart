@@ -1,9 +1,8 @@
-import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 
 class FixedVerticalResolutionViewport extends Viewport {
-  late double effectiveHeight;
+  final double effectiveHeight;
 
   final Vector2 _scaledSize = Vector2.zero();
   Vector2 get scaledSize => _scaledSize.clone();
