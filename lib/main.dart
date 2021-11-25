@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
+import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
 
 Future<void> main() async {
@@ -87,6 +88,7 @@ class MoonlanderGame extends FlameGame
       columns: 6,
       rows: 1,
     );
+    camera.viewport = FixedVerticalResolutionViewport(800);
 
     ///Ensure our joystick knob is between 50 and 100 based on view height
     ///Important its based on device size not viewport size
