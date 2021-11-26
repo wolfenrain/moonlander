@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:moonlander/components/map_component.dart';
 
 /// Paint object for when it should be a normal line.
-final linePaint = Paint()..color = Colors.grey;
+final linePaint = Paint()..color = Colors.white;
 
 /// Paint object for when it should be a goal line.
 final goalPaint = Paint();
@@ -22,7 +22,7 @@ class LineComponent extends PositionComponent with Hitbox, Collidable {
   }) : super(
           position: startPos,
           angle: atan2(endPos.y - startPos.y, endPos.x - startPos.x),
-          size: Vector2(endPos.distanceTo(startPos), 2),
+          size: Vector2(endPos.distanceTo(startPos), 1),
         );
 
   /// Indicates if this line is the end goal or not.
@@ -37,6 +37,10 @@ class LineComponent extends PositionComponent with Hitbox, Collidable {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    renderHitboxes(canvas, paint: isGoal ? goalPaint : linePaint);
+    canvas.drawLine(
+      Offset.zero,
+      Offset(size.x, 1),
+      isGoal ? goalPaint : linePaint,
+    );
   }
 }

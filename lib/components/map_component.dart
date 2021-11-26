@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/main.dart';
+import 'package:moonlander/terrain_generator.dart';
 
 /// Map rendering component.
 class MapComponent extends Component with HasGameRef<MoonlanderGame> {
@@ -26,17 +27,13 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final lines = [
-      Vector2(0, 0),
-      Vector2(1, 1),
-      Vector2(2, 1),
-      Vector2(3, 2),
-      Vector2(4, 2),
-    ];
+    final points = TerrainGenerator(
+      size: Vector2(grid.x, grid.y / 3),
+    ).generate();
 
-    for (var i = 1; i < lines.length; i++) {
-      final startPos = convert(lines[i - 1]);
-      final endPos = convert(lines[i]);
+    for (var i = 1; i < points.length; i++) {
+      final startPos = convert(points[i - 1]);
+      final endPos = convert(points[i]);
 
       await add(LineComponent(startPos, endPos));
     }

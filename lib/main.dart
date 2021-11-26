@@ -65,7 +65,7 @@ class MoonlanderGame extends FlameGame
 
   /// Restart the current level.
   void restart() {
-    // TODO: Implement restart of current level.
+    // TODO(wolfen): Implement restart of current level.
   }
 
   @override

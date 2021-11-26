@@ -177,7 +177,9 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     _velocity
       ..add(gravityChange)
       ..clamp(
-          Vector2(-7, -4), Vector2(7, 4)); //TODO algin this to the device size?
+        Vector2(-7, -4),
+        Vector2(7, 4),
+      ); // TODO(wolfen): align this to the device size?
   }
 
   @override

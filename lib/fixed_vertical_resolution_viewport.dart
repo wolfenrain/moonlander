@@ -1,16 +1,27 @@
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 
+/// Viewport based on the FixedResolutionViewport from Flame.
 class FixedVerticalResolutionViewport extends Viewport {
+  /// Viewport based on the FixedResolutionViewport from Flame.
+  FixedVerticalResolutionViewport(this.effectiveHeight);
+
+  /// The effective height of the viewport.
   final double effectiveHeight;
 
   final Vector2 _scaledSize = Vector2.zero();
+
+  /// The scaled size of this viewport.
   Vector2 get scaledSize => _scaledSize.clone();
 
   final Vector2 _resizeOffset = Vector2.zero();
+
+  /// The offset of this viewport when resized.
   Vector2 get resizeOffset => _resizeOffset.clone();
 
   late double _scale;
+
+  /// The scale factor.
   double get scale => _scale;
 
   /// The matrix used for scaling and translating the canvas
@@ -18,8 +29,6 @@ class FixedVerticalResolutionViewport extends Viewport {
 
   /// The Rect that is used to clip the canvas
   late Rect _clipRect;
-
-  FixedVerticalResolutionViewport(this.effectiveHeight);
 
   @override
   void resize(Vector2 newCanvasSize) {
@@ -54,8 +63,8 @@ class FixedVerticalResolutionViewport extends Viewport {
   }
 
   @override
-  Vector2 projectVector(Vector2 viewportCoordinates) {
-    return (viewportCoordinates * _scale)..add(_resizeOffset);
+  Vector2 projectVector(Vector2 worldCoordinates) {
+    return (worldCoordinates * _scale)..add(_resizeOffset);
   }
 
   @override
@@ -64,8 +73,8 @@ class FixedVerticalResolutionViewport extends Viewport {
   }
 
   @override
-  Vector2 scaleVector(Vector2 viewportCoordinates) {
-    return viewportCoordinates * scale;
+  Vector2 scaleVector(Vector2 worldCoordinates) {
+    return worldCoordinates * scale;
   }
 
   @override

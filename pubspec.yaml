@@ -7,7 +7,7 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  flame: ^1.0.0-releasecandidate.16
+  flame: ^1.0.0-releasecandidate.18
   flutter:
     sdk: flutter
 
