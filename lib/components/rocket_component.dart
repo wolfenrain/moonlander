@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
@@ -11,6 +13,7 @@ enum RocketState {
   /// Rocket is idle.
   idle,
 
+  ///Rocket thrust up or down.
   upDown,
 
   /// Rocket is slightly to the left.
@@ -58,6 +61,13 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final _velocity = Vector2.zero();
   final _gravity = Vector2(0, 1);
   var _collision = false;
+
+  final _fuelUsageBySecond = 5;
+
+  double _fuel = 100;
+
+  ///Fuel remaning
+  double get fuel => _fuel;
 
   @override
   Future<void> onLoad() async {
@@ -151,7 +161,10 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   void _updateVelocity(double dt) {
     //Get the direction of the vector2 and scale it with the speed and framerate
     if (!joystick.delta.isZero()) {
-      _velocity.add(joystick.delta.normalized() * (_speed * dt));
+      final joyStickDelta = joystick.delta.clone();
+      joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0);
+      _velocity.add(joyStickDelta.normalized() * (_speed * dt));
+      _fuel -= _fuelUsageBySecond * dt;
     }
     final gravityChange = _gravity.normalized() * (dt * 0.6);
     _velocity
@@ -166,7 +179,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   void render(Canvas canvas) {
     super.render(canvas);
     if (gameRef.debugMode) {
-      debugTextPaint.render(canvas, 'V:$_velocity', Vector2(size.x, 0));
+      debugTextPaint.render(canvas, 'Fuel:$fuel', Vector2(size.x, 0));
     }
   }
 
