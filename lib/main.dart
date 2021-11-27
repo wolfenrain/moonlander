@@ -11,17 +11,24 @@ import 'package:flutter/material.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
+import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
+import 'package:moonlander/game_state.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.setLandscape();
+  await Flame.device.fullScreen();
 
   final game = MoonlanderGame();
 
   runApp(
     MaterialApp(
+      theme: ThemeData(
+        ///From here https://www.dafont.com/de/aldo-the-apache.font
+        fontFamily: 'AldotheApache',
+      ),
       home: GameWidget(
         game: game,
         //Work in progress loading screen on game start
@@ -61,11 +68,16 @@ class MoonlanderGame extends FlameGame
   }
 
   @override
-  bool get debugMode => kDebugMode;
+  bool get debugMode => GameState.showDebugInfo;
 
   /// Restart the current level.
   void restart() {
     // TODO(wolfen): Implement restart of current level.
+    GameState.playState = PlayingState.palying;
+    final rocket = children.firstWhere((child) => child is RocketComponent)
+        as RocketComponent;
+
+    rocket.reset();
   }
 
   @override
@@ -93,7 +105,7 @@ class MoonlanderGame extends FlameGame
     ///Ensure our joystick knob is between 50 and 100 based on view height
     ///Important its based on device size not viewport size
     ///8.2 is the "magic" hud joystick factor... ;)
-    final knobSize = min(max(50, canvasSize.y / 8.2), 100).toDouble();
+    final knobSize = min(max(50, size.y / 8.2), 100).toDouble();
 
     final joystick = JoystickComponent(
       knob: SpriteComponent(
@@ -106,29 +118,35 @@ class MoonlanderGame extends FlameGame
       ),
       margin: const EdgeInsets.only(left: 10, bottom: 10),
     );
-
-    unawaited(
-      add(
-        RocketComponent(
-          position: size / 2,
-          size: Vector2(32, 48),
-          joystick: joystick,
-        ),
-      ),
+    final rocket = RocketComponent(
+      position: size / 2,
+      size: Vector2(32, 48),
+      joystick: joystick,
     );
+    unawaited(add(rocket));
     unawaited(add(joystick));
     unawaited(add(MapComponent()));
-
+    unawaited(add(RocketInfo(rocket)));
     unawaited(
       add(
         PauseComponent(
-          margin: const EdgeInsets.all(5),
+          margin: const EdgeInsets.only(
+            top: 10,
+            left: 5,
+          ),
           sprite: await Sprite.load('PauseButton.png'),
           spritePressed: await Sprite.load('PauseButtonInvert.png'),
           onPressed: () {
             if (overlays.isActive('pause')) {
               overlays.remove('pause');
+              if (GameState.playState == PlayingState.paused) {
+                GameState.playState = PlayingState.palying;
+              }
             } else {
+              if (GameState.playState == PlayingState.palying) {
+                GameState.playState = PlayingState.paused;
+              }
+
               overlays.add('pause');
             }
           },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
 
 /// By using the Flutter Widgets we can handle all non-game related UI through
@@ -22,14 +23,10 @@ class PauseMenu extends StatelessWidget {
             child: ListView(
               shrinkWrap: true,
               children: [
-                const Center(
+                Center(
                   child: Text(
-                    'Pause',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      color: Colors.black,
-                    ),
+                    _getTitle(),
+                    style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
                 ElevatedButton(
@@ -54,6 +51,14 @@ class PauseMenu extends StatelessWidget {
                 ),
                 const Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
+                  onPressed: () {
+                    GameState.showDebugInfo = !GameState.showDebugInfo;
+                    game.overlays.remove('pause');
+                  },
+                  child: const Text('DEBUG'),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10)),
+                ElevatedButton(
                   onPressed: () => game.overlays.remove('pause'),
                   child: const Text('Exit'),
                 ),
@@ -63,5 +68,15 @@ class PauseMenu extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _getTitle() {
+    if (GameState.playState == PlayingState.paused) {
+      return 'Pause';
+    } else if (GameState.playState == PlayingState.lost) {
+      return 'Game over';
+    } else {
+      return 'Winner';
+    }
   }
 }

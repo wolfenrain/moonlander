@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -7,6 +8,8 @@ import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moonlander/components/line_component.dart';
+import 'package:moonlander/components/map_component.dart';
+import 'package:moonlander/game_state.dart';
 
 /// Describes the render state of the [RocketComponent].
 enum RocketState {
@@ -55,7 +58,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final JoystickComponent joystick;
 
   var _heading = RocketHeading.idle;
-  final _speed = 5;
+
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
@@ -66,8 +69,14 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   double _fuel = 100;
 
+  ///Acceleration factor of the rocket
+  final speed = 5;
+
   ///Fuel remaning
   double get fuel => _fuel;
+
+  ///Velocity of the rocket
+  Vector2 get velocity => _velocity;
 
   @override
   Future<void> onLoad() async {
@@ -163,16 +172,22 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     if (!joystick.delta.isZero()) {
       final joyStickDelta = joystick.delta.clone();
       joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0);
-      _velocity.add(joyStickDelta.normalized() * (_speed * dt));
+      _velocity.add(joyStickDelta.normalized() * (speed * dt));
       _fuel -= _fuelUsageBySecond * dt;
     }
-    final gravityChange = _gravity.normalized() * (dt * 0.6);
+    //Max speed is equal to two grid cells
+    final maxSpeed = gameRef.size.clone()
+      ..divide(MapComponent.grid)
+      ..scale(2)
+      ..divide(Vector2.all(speed.toDouble()));
+
+    final gravityChange = _gravity.normalized() * (dt * 0.8);
     _velocity
       ..add(gravityChange)
       ..clamp(
-        Vector2(-7, -4),
-        Vector2(7, 4),
-      ); // TODO(wolfen): align this to the device size?
+        maxSpeed.scaled(-1),
+        maxSpeed,
+      );
   }
 
   @override
@@ -212,10 +227,30 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+    if (_collision) {
+      return;
+    }
     if (other is LineComponent) {
-      _velocity.scale(0); //Stop any movement
-      _collision = true;
+      _hitSurface();
     }
     super.onCollision(intersectionPoints, other);
+  }
+
+  void _hitSurface() {
+    _velocity.scale(0); //Stop any movement
+    _collision = true;
+    current = RocketState.idle;
+    //For now you can only loose
+    GameState.playState = PlayingState.lost;
+    gameRef.overlays.add('pause');
+  }
+
+  ///Restart the rocket
+  void reset() {
+    position = gameRef.size / 2;
+    _collision = false;
+    _velocity.scale(0);
+    current = RocketState.idle;
+    angle = 0;
   }
 }
