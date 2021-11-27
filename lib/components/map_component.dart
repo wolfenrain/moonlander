@@ -40,7 +40,13 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   }
 
   @override
-  void preRender(Canvas canvas) {
+  void render(Canvas canvas) {
+    super.render(canvas);
+    drawGrid(canvas);
+  }
+
+  ///If in debug mode draws the gird
+  void drawGrid(Canvas canvas) {
     if (!kDebugMode) {
       return;
     }
