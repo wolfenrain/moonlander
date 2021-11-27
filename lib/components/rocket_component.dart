@@ -174,6 +174,9 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0);
       _velocity.add(joyStickDelta.normalized() * (speed * dt));
       _fuel -= _fuelUsageBySecond * dt;
+      if (_fuel < 0) {
+        _loose();
+      }
     }
     //Max speed is equal to two grid cells
     final maxSpeed = gameRef.size.clone()
@@ -231,12 +234,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       return;
     }
     if (other is LineComponent) {
-      _hitSurface();
+      _loose();
     }
     super.onCollision(intersectionPoints, other);
   }
 
-  void _hitSurface() {
+  void _loose() {
     _velocity.scale(0); //Stop any movement
     _collision = true;
     current = RocketState.idle;
