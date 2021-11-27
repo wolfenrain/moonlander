@@ -63,7 +63,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
   final _gravity = Vector2(0, 1);
-  var _collision = false;
+  var _collisionActive = false;
 
   final _fuelUsageBySecond = 5;
 
@@ -204,7 +204,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   @override
   void update(double dt) {
     super.update(dt);
-    if (_collision) return;
+    if (_collisionActive) return;
     if (joystick.direction == JoystickDirection.left &&
         _heading != RocketHeading.left) {
       _heading = RocketHeading.left;
@@ -230,7 +230,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (_collision) {
+    if (_collisionActive) {
       return;
     }
     if (other is LineComponent) {
@@ -241,7 +241,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   void _loose() {
     _velocity.scale(0); //Stop any movement
-    _collision = true;
+    _collisionActive = true;
     current = RocketState.idle;
     //For now you can only loose
     GameState.playState = PlayingState.lost;
@@ -251,7 +251,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   ///Restart the rocket
   void reset() {
     position = gameRef.size / 2;
-    _collision = false;
+    _collisionActive = false;
     _velocity.scale(0);
     current = RocketState.idle;
     angle = 0;
