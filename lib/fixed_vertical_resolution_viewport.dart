@@ -11,7 +11,7 @@ class FixedVerticalResolutionViewport extends Viewport {
   /// The effective height of the viewport.
   final double effectiveHeight;
 
-  var _scaledSize = Vector2.zero();
+  final _scaledSize = Vector2.zero();
 
   /// The scaled size of this viewport.
   Vector2 get scaledSize => _scaledSize.clone();
