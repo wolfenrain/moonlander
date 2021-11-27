@@ -32,6 +32,7 @@ class TerrainGenerator {
 
     // The initial starting values.
     var height = random.nextDouble() * size.y;
+    //Keep the slope in the range of -maxStep to maxStep
     var slope = (random.nextDouble() * maxStep) * 2 - maxStep;
 
     final points = <Vector2>[];
