@@ -13,7 +13,7 @@ final linePaint = Paint()..color = Colors.white;
 final goalPaint = Paint();
 
 /// A single line component that is collidable. Part of a [MapComponent].
-class LineComponent extends PositionComponent with Hitbox, Collidable {
+class LineComponent extends PositionComponent with HasHitboxes, Collidable {
   /// Construct the line with given positions.
   LineComponent(
     Vector2 startPos,

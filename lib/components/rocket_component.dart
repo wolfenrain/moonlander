@@ -37,7 +37,7 @@ enum RocketHeading {
 
 /// A component that renders the Rocket with the different states.
 class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
-    with Hitbox, Collidable, HasGameRef {
+    with HasHitboxes, Collidable, HasGameRef {
   /// Create a new Rocket component at the given [position].
   RocketComponent({
     required Vector2 position,
