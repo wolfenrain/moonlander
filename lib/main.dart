@@ -48,9 +48,9 @@ Future<void> main() async {
 class MoonlanderGame extends FlameGame
     with
         HasCollidables,
-        HasTappableComponents,
+        HasTappables,
         HasKeyboardHandlerComponents,
-        HasDraggableComponents {
+        HasDraggables {
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
     if (overlays.isActive('pause')) {
