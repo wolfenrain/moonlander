@@ -36,10 +36,12 @@ class FixedVerticalResolutionViewport extends Viewport {
     _scale = canvasSize!.y / effectiveHeight;
 
     _scaledSize
-      ..setFrom(Vector2(
-        canvasSize!.x,
-        effectiveHeight,
-      ))
+      ..setFrom(
+        Vector2(
+          canvasSize!.x,
+          effectiveHeight,
+        ),
+      )
       ..multiply(Vector2(1, _scale));
 
     _resizeOffset
