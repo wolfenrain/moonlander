@@ -111,7 +111,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       RocketState.farRight: farRight
     };
     current = RocketState.idle;
-    addHitbox(HitboxRectangle());
+    addHitbox(HitboxRectangle(relation: Vector2(1, 0.55)));
   }
 
   // Place holder, later we need to animate based on speed in a given direction.
