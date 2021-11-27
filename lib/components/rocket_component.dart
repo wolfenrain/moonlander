@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
+import 'package:flame/sprite.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moonlander/components/line_component.dart';
 
@@ -9,6 +10,8 @@ import 'package:moonlander/components/line_component.dart';
 enum RocketState {
   /// Rocket is idle.
   idle,
+
+  upDown,
 
   /// Rocket is slightly to the left.
   left,
@@ -59,52 +62,25 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    //Load all sprites and create the animation map
+    //Rocket sprite sheet with animation groups
     const stepTime = .3;
-    final textureSize = Vector2(16, 24);
     const frameCount = 2;
-    final idle = await gameRef.loadSpriteAnimation(
-      'ship_animation_idle.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
+    final image = await gameRef.images.load('ship_spritesheet.png');
+    final sheet = SpriteSheet.fromColumnsAndRows(
+      image: image,
+      columns: frameCount,
+      rows: RocketState.values.length,
     );
-    final left = await gameRef.loadSpriteAnimation(
-      'ship_animation_left.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final right = await gameRef.loadSpriteAnimation(
-      'ship_animation_right.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final farRight = await gameRef.loadSpriteAnimation(
-      'ship_animation_far_right.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
-    final farLeft = await gameRef.loadSpriteAnimation(
-      'ship_animation_far_left.png',
-      SpriteAnimationData.sequenced(
-        amount: frameCount,
-        stepTime: stepTime,
-        textureSize: textureSize,
-      ),
-    );
+
+    final idle = sheet.createAnimation(row: 0, stepTime: stepTime);
+    final upDown = sheet.createAnimation(row: 1, stepTime: stepTime);
+    final left = sheet.createAnimation(row: 2, stepTime: stepTime);
+    final right = sheet.createAnimation(row: 3, stepTime: stepTime);
+    final farRight = sheet.createAnimation(row: 4, stepTime: stepTime);
+    final farLeft = sheet.createAnimation(row: 5, stepTime: stepTime);
     animations = {
       RocketState.idle: idle,
+      RocketState.upDown: upDown,
       RocketState.left: left,
       RocketState.right: right,
       RocketState.farLeft: farLeft,
@@ -113,6 +89,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     current = RocketState.idle;
     addHitbox(HitboxRectangle(relation: Vector2(1, 0.55)));
   }
+
+  bool get _isJoyStickIdle => joystick.direction == JoystickDirection.idle;
 
   // Place holder, later we need to animate based on speed in a given direction.
   void _setAnimationState() {
@@ -126,9 +104,11 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
             current = RocketState.right;
             angle = radians(7.5);
           } else {
-            current = RocketState.idle;
+            current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
             angle = radians(0);
           }
+        } else {
+          current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
         }
         break;
       case RocketHeading.left:
@@ -137,7 +117,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
             current = RocketState.right;
             angle = radians(7.5);
           } else if (current == RocketState.right) {
-            current = RocketState.idle;
+            current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
             angle = radians(0);
           } else if (current == RocketState.idle) {
             current = RocketState.left;
@@ -154,7 +134,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
             current = RocketState.left;
             angle = radians(-7.5);
           } else if (current == RocketState.left) {
-            current = RocketState.idle;
+            current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
             angle = radians(0);
           } else if (current == RocketState.idle) {
             current = RocketState.right;
