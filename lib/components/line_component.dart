@@ -46,7 +46,7 @@ class LineComponent extends PositionComponent
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    
+
     // Ensures that lines wont trigger collisions with each other.
     collidableType = CollidableType.passive;
 
@@ -72,7 +72,7 @@ class LineComponent extends PositionComponent
     super.render(canvas);
     canvas.drawLine(
       Offset.zero,
-      Offset(size.x, 1),
+      size.toOffset(),
       isGoal ? goalPaint : linePaint,
     );
   }
