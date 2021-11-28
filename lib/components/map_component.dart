@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/main.dart';
@@ -33,7 +32,7 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
 
   /// If in debug mode draws the grid.
   void drawGrid(Canvas canvas) {
-    if (!kDebugMode) {
+    if (!gameRef.debugMode) {
       return;
     }
     // Size of a single item in the grid.
