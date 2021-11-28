@@ -1,23 +1,23 @@
-///Describes the current state of the game
+/// Describes the current state of the game.
 enum PlayingState {
-  ///In the menu
+  /// In the menu.
   paused,
 
-  ///Lost the level
+  /// Lost the level.
   lost,
 
-  ///Won the level
+  /// Won the level.
   won,
 
-  ///Playing
+  /// Playing.
   palying,
 }
 
-///State of the game to track global infomration
+/// State of the game to track global infomration.
 class GameState {
-  ///Current playing state
+  /// Current playing state.
   static PlayingState playState = PlayingState.palying;
 
-  ///Show or hide debug infromation of flame
-  static bool showDebugInfo = true;
+  /// Show or hide debug infromation of flame.
+  static bool showDebugInfo = false;
 }

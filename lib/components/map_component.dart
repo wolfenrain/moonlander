@@ -12,17 +12,6 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   /// The workable grid sizes.
   static final grid = Vector2(40, 30);
 
-  /// Size of a single item in the [grid].
-  Vector2 get size => gameRef.size.clone()..divide(grid);
-
-  /// Convert [point] to a position on the grid.
-  Vector2 convert(Vector2 point) {
-    return Vector2(
-      size.x * point.x,
-      gameRef.size.y - size.y * point.y,
-    );
-  }
-
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -32,10 +21,7 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
     ).generate();
 
     for (var i = 1; i < points.length; i++) {
-      final startPos = convert(points[i - 1]);
-      final endPos = convert(points[i]);
-
-      await add(LineComponent(startPos, endPos));
+      await add(LineComponent(points[i - 1], points[i]));
     }
   }
 
@@ -45,16 +31,18 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
     drawGrid(canvas);
   }
 
-  ///If in debug mode draws the gird
+  /// If in debug mode draws the grid.
   void drawGrid(Canvas canvas) {
     if (!kDebugMode) {
       return;
     }
+    // Size of a single item in the grid.
+    final itemSize = gameRef.size.clone()..divide(grid);
 
     for (var x = 0; x < grid.x; x++) {
       for (var y = 0; y < grid.y; y++) {
         canvas.drawRect(
-          Rect.fromLTWH(x * size.x, y * size.y, size.x, size.y),
+          Rect.fromLTWH(x * itemSize.x, y * itemSize.y, itemSize.x, itemSize.y),
           Paint()
             ..style = PaintingStyle.stroke
             ..color = Colors.pink

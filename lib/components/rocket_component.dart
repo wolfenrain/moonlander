@@ -240,15 +240,15 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   }
 
   void _loose() {
-    _velocity.scale(0); //Stop any movement
+    _velocity.scale(0); // Stop any movement
     _collisionActive = true;
     current = RocketState.idle;
-    //For now you can only loose
+    // For now you can only lose
     GameState.playState = PlayingState.lost;
     gameRef.overlays.add('pause');
   }
 
-  ///Restart the rocket
+  /// Restart the rocket.
   void reset() {
     position = gameRef.size / 2;
     _collisionActive = false;

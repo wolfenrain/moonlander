@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moonlander/components/rocket_component.dart';
 
-///Draw the stats of our rocket
+/// Draw the stats of our rocket.
 class RocketInfo extends PositionComponent with HasGameRef {
-  ///Create new rocket info instance
+  /// Create new rocket info instance.
   RocketInfo(this._rocket) : super();
 
   final _textRenderer = TextPaint(
@@ -17,7 +17,9 @@ class RocketInfo extends PositionComponent with HasGameRef {
       color: Colors.white,
     ),
   );
-  var _text = "";
+
+  var _text = '';
+
   final RocketComponent _rocket;
 
   @override
@@ -38,9 +40,11 @@ class RocketInfo extends PositionComponent with HasGameRef {
 
   @override
   void update(double dt) {
-    _text = 'Fuel: ${_guiNumber(_rocket.fuel)} % \n'
-        'Horizontal speed: ${_guiNumber(_rocket.velocity.x * _rocket.speed)} \n'
-        'Vertical speed: ${_guiNumber((_rocket.velocity.y * _rocket.speed) * -1)} ';
+    _text = '''
+Fuel: ${_guiNumber(_rocket.fuel)} %
+Horizontal speed: ${_guiNumber(_rocket.velocity.x * _rocket.speed)}
+Vertical speed: ${_guiNumber((_rocket.velocity.y * _rocket.speed) * -1)}
+''';
     super.update(dt);
   }
 
