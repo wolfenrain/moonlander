@@ -29,11 +29,13 @@ class PauseMenu extends StatelessWidget {
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () => game.overlays.remove('pause'),
-                  child: const Text('Resume'),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 10)),
+                if (GameState.playState == PlayingState.paused)
+                  ElevatedButton(
+                    onPressed: () => game.overlays.remove('pause'),
+                    child: const Text('Resume'),
+                  ),
+                if (GameState.playState == PlayingState.paused)
+                  const Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
                   onPressed: () {
                     game.overlays.remove('pause');
