@@ -73,7 +73,7 @@ class MoonlanderGame extends FlameGame
   /// Restart the current level.
   void restart() {
     // TODO(wolfen): Implement restart of current level.
-    GameState.playState = PlayingState.palying;
+    GameState.playState = PlayingState.playing;
     final rocket = children.firstWhere((child) => child is RocketComponent)
         as RocketComponent;
 
@@ -123,6 +123,9 @@ class MoonlanderGame extends FlameGame
       size: Vector2(32, 48),
       joystick: joystick,
     );
+
+    camera.followComponent(rocket);
+
     unawaited(add(rocket));
     unawaited(add(joystick));
     unawaited(add(MapComponent()));
@@ -140,10 +143,10 @@ class MoonlanderGame extends FlameGame
             if (overlays.isActive('pause')) {
               overlays.remove('pause');
               if (GameState.playState == PlayingState.paused) {
-                GameState.playState = PlayingState.palying;
+                GameState.playState = PlayingState.playing;
               }
             } else {
-              if (GameState.playState == PlayingState.palying) {
+              if (GameState.playState == PlayingState.playing) {
                 GameState.playState = PlayingState.paused;
               }
 

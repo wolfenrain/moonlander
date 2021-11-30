@@ -10,13 +10,13 @@ enum PlayingState {
   won,
 
   /// Playing.
-  palying,
+  playing,
 }
 
 /// State of the game to track global infomration.
 class GameState {
   /// Current playing state.
-  static PlayingState playState = PlayingState.palying;
+  static PlayingState playState = PlayingState.playing;
 
   /// Show or hide debug infromation of flame.
   static bool showDebugInfo = true;
