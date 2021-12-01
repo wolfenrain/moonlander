@@ -7,6 +7,7 @@ import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/widgets.dart';
+import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/game_state.dart';
@@ -195,6 +196,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   @override
   void render(Canvas canvas) {
+    ///If we lost we dont show the rocket anymore
+    if (GameState.playState == PlayingState.lost) return;
     super.render(canvas);
     if (gameRef.debugMode) {
       debugTextPaint.render(canvas, 'Fuel:$fuel', Vector2(size.x, 0));
@@ -245,7 +248,15 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     current = RocketState.idle;
     // For now you can only lose
     GameState.playState = PlayingState.lost;
-    gameRef.overlays.add('pause');
+    gameRef.add(
+      ExplosionComponent(
+        position.clone()
+          ..add(
+            Vector2(size.x / 2, 0),
+          ),
+        angle: -angle,
+      ),
+    );
   }
 
   /// Restart the rocket.

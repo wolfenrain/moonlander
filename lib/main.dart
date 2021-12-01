@@ -8,6 +8,7 @@ import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
@@ -74,10 +75,9 @@ class MoonlanderGame extends FlameGame
   void restart() {
     // TODO(wolfen): Implement restart of current level.
     GameState.playState = PlayingState.playing;
-    final rocket = children.firstWhere((child) => child is RocketComponent)
-        as RocketComponent;
-
-    rocket.reset();
+    (children.firstWhere((child) => child is RocketComponent)
+            as RocketComponent)
+        .reset();
   }
 
   @override

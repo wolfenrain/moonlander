@@ -19,5 +19,5 @@ class GameState {
   static PlayingState playState = PlayingState.playing;
 
   /// Show or hide debug infromation of flame.
-  static bool showDebugInfo = true;
+  static bool showDebugInfo = false;
 }
