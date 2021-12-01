@@ -1,8 +1,8 @@
 import 'package:flame/components.dart';
 
-///An explosion from https://ansimuz.itch.io/explosion-animations-pack
+/// An explosion from https://ansimuz.itch.io/explosion-animations-pack.
 class ExplosionComponent extends SpriteAnimationComponent with HasGameRef {
-  ///Provide the position, explosion does the rest
+  /// Provide the position, explosion does the rest.
   ExplosionComponent(Vector2 position, {double? angle})
       : super(
           position: position,
