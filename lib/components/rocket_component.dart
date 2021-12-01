@@ -223,7 +223,25 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       _animationTime = 0;
     }
     _updateVelocity(dt);
-    position.add(_velocity);
+
+    final worldBounds = gameRef.camera.worldBounds!;
+    final nextPosition = position + _velocity;
+
+    // Check if the next position is within the world bounds on the X axis.
+    // If it is we set the position to it, otherwise we set velocity to 0.
+    if (worldBounds.left <= nextPosition.x &&
+        nextPosition.x + size.x <= worldBounds.right) {
+      position.x = nextPosition.x;
+    } else {
+      _velocity.x = 0;
+    }
+
+    // Check if the next position is within the world bounds on the y axis.
+    // If it is we set the position to it, otherwise we set velocity to 0.
+    if (nextPosition.y + size.y <= worldBounds.bottom) {
+      position.y = nextPosition.y;
+    }
+
     _animationTime += dt;
     if (_animationTime >= _animationSpeed) {
       _setAnimationState();
