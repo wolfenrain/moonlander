@@ -9,7 +9,13 @@ import 'package:moonlander/terrain_generator.dart';
 /// Map rendering component.
 class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   /// Map rendering component.
-  MapComponent([this.lengthOfMap = 100]);
+  MapComponent({
+    this.lengthOfMap = 100,
+    this.mapSeed,
+  });
+
+  /// The seed used for terrain generation.
+  final int? mapSeed;
 
   /// Length of the map in grid units.
   final double lengthOfMap;
@@ -22,6 +28,7 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
     await super.onLoad();
 
     final points = TerrainGenerator(
+      seed: mapSeed,
       size: Vector2(lengthOfMap, grid.y / 3),
     ).generate();
 
