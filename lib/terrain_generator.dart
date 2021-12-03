@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 
@@ -33,7 +34,7 @@ class TerrainGenerator {
     // The initial starting values.
     var height = random.nextDouble() * size.y;
     //Keep the slope in the range of -maxStep to maxStep
-    var slope = (random.nextDouble() * maxStep) * 2 - maxStep;
+    var slope = lerpDouble(-maxStep, maxStep, random.nextDouble())!;
 
     final points = <Vector2>[];
     for (var x = 0.0; x <= size.x; x++) {
@@ -41,7 +42,7 @@ class TerrainGenerator {
       height += slope;
 
       // Update the slope by a random step change.
-      slope += (random.nextDouble() * stepChange) * 2 - stepChange;
+      slope += lerpDouble(-stepChange, stepChange, random.nextDouble())!;
 
       // Clamp the slope to the max step.
       slope = slope.clamp(-maxStep, maxStep);
