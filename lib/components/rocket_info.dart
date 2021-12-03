@@ -40,10 +40,11 @@ class RocketInfo extends PositionComponent with HasGameRef {
 
   @override
   void update(double dt) {
+    final actualSpeed = _rocket.velocity.scaled(_rocket.speed.toDouble());
     _text = '''
 Fuel: ${_guiNumber(_rocket.fuel)} %
-Horizontal speed: ${_guiNumber(_rocket.velocity.x * _rocket.speed)}
-Vertical speed: ${_guiNumber((_rocket.velocity.y * _rocket.speed) * -1)}
+Horizontal speed: ${_guiNumber(actualSpeed.x)}
+Vertical speed: ${_guiNumber(actualSpeed.y * -1)}
 ''';
     super.update(dt);
   }
