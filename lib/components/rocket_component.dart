@@ -282,6 +282,39 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     if (_collisionActive) {
       return;
     }
+    final hitBox = hitboxes.first;
+    final leftHit = Rect.fromLTWH(
+      hitBox.position.x,
+      hitBox.position.y,
+      hitBox.size.x * 0.5,
+      hitBox.size.y * 0.7,
+    );
+    final rightHit = Rect.fromLTWH(
+      hitBox.position.x + hitBox.size.x * 0.5,
+      hitBox.position.y,
+      hitBox.size.x * 0.5,
+      hitBox.size.y * 0.7,
+    );
+    final bottomHit = Rect.fromLTWH(
+      hitBox.position.x,
+      hitBox.position.y + hitBox.size.y * 0.7,
+      hitBox.size.x,
+      hitBox.size.y * 0.7,
+    );
+    debugPrint("Left: " + leftHit.toString());
+    debugPrint("Right: " + rightHit.toString());
+    debugPrint("Bottom: " + bottomHit.toString());
+    for (final point in intersectionPoints) {
+      final hitRec = point.toPositionedRect(Vector2.all(1));
+      debugPrint('Hit rect: ' + hitRec.toString());
+      if (leftHit.intersect(hitRec).size.isEmpty == false) {
+        debugPrint('Hit left');
+      } else if (rightHit.intersect(hitRec).size.isEmpty == false) {
+        debugPrint('Hit right');
+      } else if (bottomHit.intersect(hitRec).size.isEmpty == false) {
+        debugPrint('Hit bottom');
+      }
+    }
     if (other is LineComponent) {
       _loose();
     }
