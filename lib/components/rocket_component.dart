@@ -69,7 +69,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final _gravity = Vector2(0, 1);
   var _collisionActive = false;
 
-  final _fuelUsageBySecond = 5;
+  final _fuelUsageBySecond = 10;
 
   double _fuel = 100;
 
