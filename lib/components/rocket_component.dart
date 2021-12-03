@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/input.dart';
+import 'package:flame/particles.dart';
 import 'package:flame/sprite.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
@@ -168,6 +171,28 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     }
   }
 
+  final _rnd = Random();
+  void _createEngineParticels() {
+    final colorLerp = _rnd.nextDouble();
+    final particelOffset = Vector2(size.x * 0.4, size.y * 0.8);
+    gameRef.add(
+      ParticleComponent(
+        AcceleratedParticle(
+          position: position.clone()..add(particelOffset),
+          speed: Vector2(
+            _rnd.nextDouble() * 200 - 100,
+            -max(_rnd.nextDouble(), 0.1) * 100,
+          ),
+          child: CircleParticle(
+            radius: 1.0,
+            paint: Paint()
+              ..color = Color.lerp(Colors.orange, Colors.red, colorLerp)!,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _updateVelocity(double dt) {
     //Get the direction of the vector2 and scale it with the speed and framerate
     if (!joystick.delta.isZero()) {
@@ -177,6 +202,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       _fuel -= _fuelUsageBySecond * dt;
       if (_fuel < 0) {
         _loose();
+      } else {
+        _createEngineParticels();
       }
     }
     //Max speed is equal to two grid cells
@@ -186,6 +213,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       ..divide(Vector2.all(speed.toDouble()));
 
     final gravityChange = _gravity.normalized() * (dt * 0.8);
+
     _velocity
       ..add(gravityChange)
       ..clamp(
@@ -284,5 +312,6 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     _velocity.scale(0);
     current = RocketState.idle;
     angle = 0;
+    _fuel = 100;
   }
 }
