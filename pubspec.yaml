@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   flame: ^1.0.0-releasecandidate.18
+  flame_audio: ^1.0.0-rc.15
   flutter:
     sdk: flutter
 

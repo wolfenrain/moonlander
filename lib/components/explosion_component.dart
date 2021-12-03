@@ -1,7 +1,9 @@
 import 'package:flame/components.dart';
+import 'package:moonlander/main.dart';
 
 /// An explosion from https://ansimuz.itch.io/explosion-animations-pack.
-class ExplosionComponent extends SpriteAnimationComponent with HasGameRef {
+class ExplosionComponent extends SpriteAnimationComponent
+    with HasGameRef<MoonlanderGame> {
   /// Provide the position, explosion does the rest.
   ExplosionComponent(Vector2 position, {double? angle})
       : super(
@@ -24,7 +26,7 @@ class ExplosionComponent extends SpriteAnimationComponent with HasGameRef {
       ),
     );
     playing = true;
-
+    gameRef.audioPlayer.playExplosion();
     return super.onLoad();
   }
 

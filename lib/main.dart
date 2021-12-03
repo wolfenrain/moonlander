@@ -8,6 +8,7 @@ import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:moonlander/components/audio_player.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
@@ -58,6 +59,9 @@ class MoonlanderGame extends FlameGame
         HasTappables,
         HasKeyboardHandlerComponents,
         HasDraggables {
+  ///Interface to play audio
+  late final MoonLanderAudioPlayer audioPlayer;
+
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
     if (overlays.isActive('pause')) {
@@ -100,6 +104,9 @@ class MoonlanderGame extends FlameGame
       rows: 1,
     );
     camera.viewport = FixedVerticalResolutionViewport(800);
+    //Init and load the audio assets
+    audioPlayer = MoonLanderAudioPlayer();
+    await audioPlayer.loadAssets();
 
     ///Ensure our joystick knob is between 50 and 100 based on view height
     ///Important its based on device size not viewport size
