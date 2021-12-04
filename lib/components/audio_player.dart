@@ -10,7 +10,7 @@ class MoonLanderAudioPlayer {
   Future<void> loadAssets() async {
     //Sound from https://opengameart.org/content/atari-booms by dklon
     _explosion = await AudioPool.create(
-      'sounds/atari_boom5.mp3',
+      'assets/sounds/atari_boom5.mp3',
       prefix: '',
     );
   }
