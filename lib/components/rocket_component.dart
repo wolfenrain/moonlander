@@ -14,6 +14,7 @@ import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/game_state.dart';
+import 'package:moonlander/main.dart';
 
 /// Describes the render state of the [RocketComponent].
 enum RocketState {
@@ -50,7 +51,7 @@ enum RocketHeading {
 
 /// A component that renders the Rocket with the different states.
 class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
-    with HasHitboxes, Collidable, HasGameRef {
+    with HasHitboxes, Collidable, HasGameRef<MoonlanderGame> {
   /// Create a new Rocket component at the given [position].
   RocketComponent({
     required Vector2 position,
@@ -62,7 +63,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final JoystickComponent joystick;
 
   var _heading = RocketHeading.idle;
-
+  final engineSoundCoolDown = 0.2;
+  var engineSoundCounter = 0.2;
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
@@ -110,7 +112,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       RocketState.farRight: farRight
     };
     current = RocketState.idle;
-    addHitbox(HitboxRectangle(relation: Vector2(1, 0.55)));
+    addHitbox(HitboxRectangle(relation: Vector2(0.95, 0.5)));
   }
 
   bool get _isJoyStickIdle => joystick.direction == JoystickDirection.idle;
@@ -204,6 +206,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         _loose();
       } else {
         _createEngineParticels();
+        if (engineSoundCounter >= engineSoundCoolDown) {
+          gameRef.audioPlayer.playEngine();
+          engineSoundCounter = 0;
+        } else {
+          engineSoundCounter += dt;
+        }
       }
     }
     //Max speed is equal to two grid cells
@@ -282,38 +290,55 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     if (_collisionActive) {
       return;
     }
-    final hitBox = hitboxes.first;
+    var crashed = true;
+    if (other is LineComponent) {
+      final hitBox = hitboxes.first;
 
-    for (final point in intersectionPoints) {
-      // Calculate which side of the hitbox had the collision
-      final vectorUp = Vector2(0, -1);
-      final relativeIntersectionPoint = (point - hitBox.position).normalized();
-      final angle = vectorUp.angleToSigned(relativeIntersectionPoint);
-      var angleDeg = degrees(angle);
+      for (final point in intersectionPoints) {
+        // Calculate which side of the hitbox had the collision
+        final vectorUp = Vector2(0, -1);
+        final relativeIntersectionPoint =
+            (point - hitBox.position).normalized();
+        final angle = vectorUp.angleToSigned(relativeIntersectionPoint);
+        var angleDeg = degrees(angle);
+        print(other.isGoal ? 'Hit goal' : 'Hit no goal');
+        final verticalSpeed = _velocity.y.abs() * speed;
+        print('Vertical on hit: ${verticalSpeed}');
+        // Fix for the angleToSigned method returning values form -180 to 180
+        if (angleDeg < 0) angleDeg = 360 + angleDeg;
 
-      // Fix for the angleToSigned method returning values form -180 to 180
-      if (angleDeg < 0) angleDeg = 360 + angleDeg;
+        // Print side depending on angle (from 0 to 360)
 
-      // Print side depending on angle (from 0 to 360)
-      print('Collision at $angleDeg');
-      if (angleDeg >= (360 - 45) || angleDeg <= 45) {
-        print('Top');
-      }
-      if (angleDeg >= 45 && angleDeg <= 135) {
-        print('Right');
-      }
-      if (angleDeg >= 135 && angleDeg <= 225) {
-        print('Bottom');
-      }
-      if (angleDeg >= 225 && angleDeg <= 315) {
-        print('Left');
+        if (angleDeg >= (360 - 45) || angleDeg <= 45) {
+          print('Hit top');
+        }
+        if (angleDeg >= 45 && angleDeg <= 130) {
+          print('Hit right');
+        }
+        if (angleDeg >= 130 && angleDeg <= 230) {
+          print('Hit bottom');
+          if (other.isGoal && verticalSpeed <= 6) {
+            crashed = false;
+          }
+        }
+        if (angleDeg >= 230 && angleDeg <= 315) {
+          print('Hit left');
+        }
       }
     }
 
-    if (other is LineComponent) {
+    if (crashed) {
       _loose();
+    } else {
+      _win();
     }
     super.onCollision(intersectionPoints, other);
+  }
+
+  void _win() {
+    _velocity.scale(0);
+    _collisionActive = true;
+    current = RocketState.idle;
   }
 
   void _loose() {
