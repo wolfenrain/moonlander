@@ -22,6 +22,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
      - assets/images/
+     - assets/sounds/
   fonts:
      - family: AldotheApache
        fonts:
