@@ -1,4 +1,5 @@
 import 'package:flame_audio/flame_audio.dart';
+import 'package:moonlander/game_state.dart';
 
 ///Wraper to play any audio and load the assets
 class MoonLanderAudioPlayer {
@@ -12,11 +13,15 @@ class MoonLanderAudioPlayer {
 
   ///Play the default explosion sound
   void playExplosion() {
-    FlameAudio.play('atari_boom5.mp3');
+    if (GameState.playSounds) {
+      FlameAudio.play('atari_boom5.mp3');
+    }
   }
 
   ///Play engine sound
   void playEngine() {
-    FlameAudio.play('engine.mp3');
+    if (GameState.playSounds) {
+      FlameAudio.play('engine.mp3');
+    }
   }
 }
