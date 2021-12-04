@@ -12,7 +12,7 @@ class RocketInfo extends PositionComponent with HasGameRef {
 
   final _textRenderer = TextPaint(
     style: const TextStyle(
-      fontSize: 16,
+      fontSize: 20,
       fontFamily: 'AldotheApache',
       color: Colors.white,
     ),
