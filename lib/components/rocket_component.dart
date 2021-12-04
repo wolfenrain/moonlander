@@ -63,8 +63,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   final JoystickComponent joystick;
 
   var _heading = RocketHeading.idle;
-  final engineSoundCoolDown = 0.2;
-  var engineSoundCounter = 0.2;
+  final _engineSoundCoolDown = 0.2;
+  var _engineSoundCounter = 0.2;
   final _animationSpeed = .1;
   var _animationTime = 0.0;
   final _velocity = Vector2.zero();
@@ -206,11 +206,11 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         _loose();
       } else {
         _createEngineParticels();
-        if (engineSoundCounter >= engineSoundCoolDown) {
+        if (_engineSoundCounter >= _engineSoundCoolDown) {
           gameRef.audioPlayer.playEngine();
-          engineSoundCounter = 0;
+          _engineSoundCounter = 0;
         } else {
-          engineSoundCounter += dt;
+          _engineSoundCounter += dt;
         }
       }
     }
@@ -301,28 +301,28 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
             (point - hitBox.position).normalized();
         final angle = vectorUp.angleToSigned(relativeIntersectionPoint);
         var angleDeg = degrees(angle);
-        print(other.isGoal ? 'Hit goal' : 'Hit no goal');
+        debugPrint(other.isGoal ? 'Hit goal' : 'Hit no goal');
         final verticalSpeed = _velocity.y.abs() * speed;
-        print('Vertical on hit: ${verticalSpeed}');
+        debugPrint('Vertical on hit: $verticalSpeed');
         // Fix for the angleToSigned method returning values form -180 to 180
         if (angleDeg < 0) angleDeg = 360 + angleDeg;
 
         // Print side depending on angle (from 0 to 360)
 
         if (angleDeg >= (360 - 45) || angleDeg <= 45) {
-          print('Hit top');
+          debugPrint('Hit top');
         }
         if (angleDeg >= 45 && angleDeg <= 130) {
-          print('Hit right');
+          debugPrint('Hit right');
         }
         if (angleDeg >= 130 && angleDeg <= 230) {
-          print('Hit bottom');
+          debugPrint('Hit bottom');
           if (other.isGoal && verticalSpeed <= 6) {
             crashed = false;
           }
         }
         if (angleDeg >= 230 && angleDeg <= 315) {
-          print('Hit left');
+          debugPrint('Hit left');
         }
       }
     }
