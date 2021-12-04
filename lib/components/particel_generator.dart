@@ -20,7 +20,7 @@ class ParticelGenerator {
           -max(_random.nextDouble(), 0.1) * 100,
         ),
         child: CircleParticle(
-          radius: 1.0,
+          radius: 1,
           //Random color between yellow and red
           paint: Paint()
             ..color =
