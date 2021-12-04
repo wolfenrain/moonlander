@@ -13,6 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/map_component.dart';
+import 'package:moonlander/components/particel_generator.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
 
@@ -73,6 +74,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   final _fuelUsageBySecond = 10;
 
+  late final Vector2 _particelOffset;
   double _fuel = 100;
 
   ///Acceleration factor of the rocket
@@ -113,6 +115,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     };
     current = RocketState.idle;
     addHitbox(HitboxRectangle(relation: Vector2(0.95, 0.5)));
+    _particelOffset = Vector2(size.x * 0.4, size.y * 0.8);
   }
 
   bool get _isJoyStickIdle => joystick.direction == JoystickDirection.idle;
@@ -173,24 +176,10 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     }
   }
 
-  final _rnd = Random();
   void _createEngineParticels() {
-    final colorLerp = _rnd.nextDouble();
-    final particelOffset = Vector2(size.x * 0.4, size.y * 0.8);
     gameRef.add(
-      ParticleComponent(
-        AcceleratedParticle(
-          position: position.clone()..add(particelOffset),
-          speed: Vector2(
-            _rnd.nextDouble() * 200 - 100,
-            -max(_rnd.nextDouble(), 0.1) * 100,
-          ),
-          child: CircleParticle(
-            radius: 1.0,
-            paint: Paint()
-              ..color = Color.lerp(Colors.orange, Colors.red, colorLerp)!,
-          ),
-        ),
+      ParticelGenerator.createEngineParticle(
+        position: position.clone()..add(_particelOffset),
       ),
     );
   }
