@@ -11,7 +11,7 @@ import 'package:moonlander/main.dart';
 final linePaint = Paint()..color = Colors.white;
 
 /// Paint object for when it should be a goal line.
-final goalPaint = Paint();
+final goalPaint = Paint()..color = Colors.lightBlue;
 
 /// A single line component that is collidable. Part of a [MapComponent].
 class LineComponent extends PositionComponent

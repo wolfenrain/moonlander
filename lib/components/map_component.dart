@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/main.dart';
 import 'package:moonlander/terrain_generator.dart';
 
@@ -27,10 +26,12 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final points = TerrainGenerator(
-      seed: mapSeed,
-      size: Vector2(lengthOfMap, grid.y / 3),
-    ).generate();
+    await addAll(
+      TerrainGenerator(
+        size: Vector2(lengthOfMap, grid.y / 3),
+        amountOfLandingSpots: 10,
+      ).generate(),
+    );
 
     // Size of a single item in the grid.
     final itemSize = gameRef.size.clone()..divide(MapComponent.grid);
@@ -42,10 +43,6 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
       lengthOfMap * itemSize.x,
       grid.y * itemSize.y,
     );
-
-    for (var i = 1; i < points.length; i++) {
-      await add(LineComponent(points[i - 1], points[i]));
-    }
   }
 
   @override
