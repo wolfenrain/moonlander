@@ -33,15 +33,19 @@ Future<void> main() async {
       home: GameWidget(
         game: game,
         //Work in progress loading screen on game start
-        loadingBuilder: (context) => const Center(
-          child: CircularProgressIndicator(),
+        loadingBuilder: (context) => const Material(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
         //Work in progress error handling
         errorBuilder: (context, ex) {
           //Print the error in th dev console
           debugPrint(ex.toString());
-          return const Center(
-            child: Text('Sorry, something went wrong. Reload me'),
+          return const Material(
+            child: Center(
+              child: Text('Sorry, something went wrong. Reload me'),
+            ),
           );
         },
         overlayBuilderMap: {
