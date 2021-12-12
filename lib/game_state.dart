@@ -1,3 +1,5 @@
+import 'package:moonlander/database/database.dart';
+
 /// Describes the current state of the game.
 enum PlayingState {
   /// In the menu.
@@ -23,4 +25,7 @@ class GameState {
 
   ///Toggle sounds
   static bool playSounds = true;
+
+  ///Our database for the complete game
+  static late final MoonLanderDatabase database;
 }

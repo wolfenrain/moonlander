@@ -13,6 +13,7 @@ import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/components/rocket_info.dart';
+import 'package:moonlander/database/database.dart';
 import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
@@ -21,7 +22,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.setLandscape();
   await Flame.device.fullScreen();
-
+  GameState.database = MoonLanderDatabase();
   final game = MoonlanderGame();
 
   runApp(

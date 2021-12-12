@@ -1,0 +1,5 @@
+import 'level.dart';
+
+getTopTenScore: SELECT * FROM level WHERE level.highscore <> null ORDER BY level.highscore DESC LIMIT 10;
+
+updateScoreForLevel: UPDATE level SET highscore=:newHighscore WHERE id=:levelId;
