@@ -55,9 +55,8 @@ class FixedVerticalResolutionViewport extends Viewport {
 
   @override
   void render(Canvas c, void Function(Canvas) renderGame) {
-    c
-      ..save()
-      ..transform(_transform.storage);
+    c.save();
+    apply(c);
     renderGame(c);
     c.restore();
   }
@@ -84,4 +83,9 @@ class FixedVerticalResolutionViewport extends Viewport {
 
   @override
   Vector2 get effectiveSize => Vector2(canvasSize!.x / _scale, effectiveHeight);
+
+  @override
+  void apply(Canvas c) {
+    c.transform(_transform.storage);
+  }
 }

@@ -22,9 +22,6 @@ class RocketInfo extends PositionComponent with HasGameRef {
 
   final RocketComponent _rocket;
 
-  @override
-  bool get isHud => true;
-
   String _guiNumber(double number) => number.toStringAsFixed(2);
 
   @override
@@ -35,6 +32,7 @@ class RocketInfo extends PositionComponent with HasGameRef {
     final textSize = _textRenderer.measureText(_text);
     size = textSize;
     position = Vector2(gameRef.size.x / 2 - size.x / 2, textSize.y / 3);
+    positionType = PositionType.viewport;
     return super.onLoad();
   }
 
