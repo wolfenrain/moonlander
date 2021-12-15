@@ -12,7 +12,7 @@ class LevelData extends DataClass implements Insertable<LevelData> {
   final int id;
 
   ///Seed of the level
-  final int seed;
+  final String seed;
 
   ///Highscore of the player if level was solved
   final int? highscore;
@@ -22,7 +22,7 @@ class LevelData extends DataClass implements Insertable<LevelData> {
     return LevelData(
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      seed: const IntType()
+      seed: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}seed'])!,
       highscore: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}highscore']),
@@ -32,7 +32,7 @@ class LevelData extends DataClass implements Insertable<LevelData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['seed'] = Variable<int>(seed);
+    map['seed'] = Variable<String>(seed);
     if (!nullToAbsent || highscore != null) {
       map['highscore'] = Variable<int?>(highscore);
     }
@@ -54,7 +54,7 @@ class LevelData extends DataClass implements Insertable<LevelData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LevelData(
       id: serializer.fromJson<int>(json['id']),
-      seed: serializer.fromJson<int>(json['seed']),
+      seed: serializer.fromJson<String>(json['seed']),
       highscore: serializer.fromJson<int?>(json['highscore']),
     );
   }
@@ -63,12 +63,12 @@ class LevelData extends DataClass implements Insertable<LevelData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'seed': serializer.toJson<int>(seed),
+      'seed': serializer.toJson<String>(seed),
       'highscore': serializer.toJson<int?>(highscore),
     };
   }
 
-  LevelData copyWith({int? id, int? seed, int? highscore}) => LevelData(
+  LevelData copyWith({int? id, String? seed, int? highscore}) => LevelData(
         id: id ?? this.id,
         seed: seed ?? this.seed,
         highscore: highscore ?? this.highscore,
@@ -96,7 +96,7 @@ class LevelData extends DataClass implements Insertable<LevelData> {
 
 class LevelCompanion extends UpdateCompanion<LevelData> {
   final Value<int> id;
-  final Value<int> seed;
+  final Value<String> seed;
   final Value<int?> highscore;
   const LevelCompanion({
     this.id = const Value.absent(),
@@ -105,12 +105,12 @@ class LevelCompanion extends UpdateCompanion<LevelData> {
   });
   LevelCompanion.insert({
     this.id = const Value.absent(),
-    required int seed,
+    required String seed,
     this.highscore = const Value.absent(),
   }) : seed = Value(seed);
   static Insertable<LevelData> custom({
     Expression<int>? id,
-    Expression<int>? seed,
+    Expression<String>? seed,
     Expression<int?>? highscore,
   }) {
     return RawValuesInsertable({
@@ -121,7 +121,7 @@ class LevelCompanion extends UpdateCompanion<LevelData> {
   }
 
   LevelCompanion copyWith(
-      {Value<int>? id, Value<int>? seed, Value<int?>? highscore}) {
+      {Value<int>? id, Value<String>? seed, Value<int?>? highscore}) {
     return LevelCompanion(
       id: id ?? this.id,
       seed: seed ?? this.seed,
@@ -136,7 +136,7 @@ class LevelCompanion extends UpdateCompanion<LevelData> {
       map['id'] = Variable<int>(id.value);
     }
     if (seed.present) {
-      map['seed'] = Variable<int>(seed.value);
+      map['seed'] = Variable<String>(seed.value);
     }
     if (highscore.present) {
       map['highscore'] = Variable<int?>(highscore.value);
@@ -168,9 +168,9 @@ class $LevelTable extends Level with TableInfo<$LevelTable, LevelData> {
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _seedMeta = const VerificationMeta('seed');
   @override
-  late final GeneratedColumn<int?> seed = GeneratedColumn<int?>(
+  late final GeneratedColumn<String?> seed = GeneratedColumn<String?>(
       'seed', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _highscoreMeta = const VerificationMeta('highscore');
   @override
   late final GeneratedColumn<int?> highscore = GeneratedColumn<int?>(
@@ -236,6 +236,14 @@ abstract class _$MoonLanderDatabase extends GeneratedDatabase {
       variables: [Variable<int?>(newHighscore), Variable<int>(levelId)],
       updates: {level},
       updateKind: UpdateKind.update,
+    );
+  }
+
+  Future<int> createANewLevel(String newLevelSeed) {
+    return customInsert(
+      'INSERT INTO level (seed) VALUES(:newLevelSeed)',
+      variables: [Variable<String>(newLevelSeed)],
+      updates: {level},
     );
   }
 

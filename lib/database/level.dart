@@ -6,7 +6,7 @@ class Level extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   ///Seed of the level
-  IntColumn get seed => integer()();
+  TextColumn get seed => text()();
 
   ///Highscore of the player if level was solved
   IntColumn get highscore => integer().nullable()();
