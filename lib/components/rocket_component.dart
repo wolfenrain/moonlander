@@ -84,6 +84,8 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   ///Velocity of the rocket
   Vector2 get velocity => _velocity;
 
+  double _flyingTime = 0;
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -184,6 +186,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   void _updateVelocity(double dt) {
     //Get the direction of the vector2 and scale it with the speed and framerate
+    _flyingTime += dt;
     if (!joystick.delta.isZero()) {
       final joyStickDelta = joystick.delta.clone();
       joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0);
@@ -312,20 +315,34 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
           debugPrint('Hit left');
         }
       }
+      if (crashed) {
+        _loose();
+      } else {
+        _win(other);
+      }
     }
 
-    if (crashed) {
-      _loose();
-    } else {
-      _win();
-    }
     super.onCollision(intersectionPoints, other);
   }
 
-  void _win() {
+  void _win(LineComponent landingSpot) {
+    _calculateScore(landingSpot);
     _velocity.scale(0);
     _collisionActive = true;
     current = RocketState.idle;
+    GameState.playState = PlayingState.won;
+    gameRef.overlays.add('pause');
+    if (GameState.currentLevel != null) {
+      GameState.database
+          .updateScoreForLevel(GameState.lastScore, GameState.currentLevel!.id);
+    }
+  }
+
+  void _calculateScore(LineComponent landingSpot) {
+    final int landingSpotScore = 5;
+
+    GameState.lastScore =
+        (fuel * (_velocity.y.abs() * speed) * landingSpotScore) ~/ _flyingTime;
   }
 
   void _loose() {
@@ -353,5 +370,6 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     current = RocketState.idle;
     angle = 0;
     _fuel = 100;
+    _flyingTime = 0;
   }
 }

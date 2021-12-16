@@ -26,6 +26,9 @@ class GameState {
   ///Seed of the current loaded level
   static late String seed;
 
+  ///Last score if null no new score for current level
+  static int? lastScore;
+
   /// Show or hide debug infromation of flame.
   static bool showDebugInfo = false;
 
