@@ -43,6 +43,14 @@ class PauseMenu extends StatelessWidget {
                   },
                   child: const Text('Restart'),
                 ),
+                if (GameState.currentLevel != null)
+                  ElevatedButton(
+                    onPressed: () {
+                      game.overlays.remove('pause');
+                      game.overlays.add('highscore');
+                    },
+                    child: const Text('Highscorse'),
+                  ),
                 const Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
                   onPressed: () {
@@ -50,19 +58,6 @@ class PauseMenu extends StatelessWidget {
                     game.overlays.add('levelSelection');
                   },
                   child: const Text('Levels'),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 10)),
-                ElevatedButton(
-                  onPressed: () {
-                    GameState.showDebugInfo = !GameState.showDebugInfo;
-                    game.overlays.remove('pause');
-                  },
-                  child: const Text('DEBUG'),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 10)),
-                ElevatedButton(
-                  onPressed: () => game.overlays.remove('pause'),
-                  child: const Text('Exit'),
                 ),
               ],
             ),
@@ -78,7 +73,7 @@ class PauseMenu extends StatelessWidget {
     } else if (GameState.playState == PlayingState.lost) {
       return 'Game over';
     } else {
-      return 'Winner';
+      return 'Winner Score: ${GameState.lastScore?.toStringAsFixed(0)}';
     }
   }
 }

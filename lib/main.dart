@@ -9,6 +9,7 @@ import 'package:flame/sprite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/components/audio_player.dart';
+import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
@@ -147,6 +148,7 @@ class MoonlanderGame extends FlameGame
 
     unawaited(add(_rocket));
     unawaited(add(joystick));
+    children.register<MapComponent>();
     unawaited(add(MapComponent()));
     unawaited(add(RocketInfo(_rocket)));
     unawaited(
@@ -186,9 +188,17 @@ class MoonlanderGame extends FlameGame
   Future<void> loadLevel(String seed) async {
     restart();
     GameState.seed = seed;
-    children.removeWhere((element) => element is MapComponent);
+    children.removeAll(children.query<MapComponent>());
     await add(MapComponent(mapSeed: seed.hashCode));
     _removeAnyOverlay();
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    collidables.removeWhere(
+      (element) => element is LineComponent && element.parent == null,
+    );
   }
 
   void _removeAnyOverlay() {
