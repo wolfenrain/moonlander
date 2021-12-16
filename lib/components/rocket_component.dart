@@ -283,7 +283,11 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
       for (final point in intersectionPoints) {
         // Calculate which side of the hitbox had the collision
-        final vectorUp = Vector2(0, -1);
+        final vectorUp = Vector2(0, -1)
+          ..rotate(hitBox.parentAngle)
+          ..normalize();
+        print('Hitbox angle ${hitBox.parentAngle}');
+        print('Up is $vectorUp');
         final relativeIntersectionPoint =
             (point - hitBox.position).normalized();
         final angle = vectorUp.angleToSigned(relativeIntersectionPoint);
@@ -299,16 +303,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (angleDeg >= (360 - 45) || angleDeg <= 45) {
           debugPrint('Hit top');
         }
-        if (angleDeg >= 45 && angleDeg <= 130) {
+        if (angleDeg >= 45 && angleDeg <= 135) {
           debugPrint('Hit right');
         }
-        if (angleDeg >= 130 && angleDeg <= 230) {
+        if (angleDeg >= 135 && angleDeg <= 225) {
           debugPrint('Hit bottom');
           if (other.isGoal && verticalSpeed <= 6) {
             crashed = false;
           }
         }
-        if (angleDeg >= 230 && angleDeg <= 315) {
+        if (angleDeg >= 225 && angleDeg <= 315) {
           debugPrint('Hit left');
         }
       }
