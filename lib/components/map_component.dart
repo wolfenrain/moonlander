@@ -30,6 +30,7 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
       TerrainGenerator(
         size: Vector2(lengthOfMap, grid.y / 3),
         amountOfLandingSpots: 10,
+        seed: mapSeed,
       ).generate(),
     );
 

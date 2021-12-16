@@ -47,7 +47,7 @@ class PauseMenu extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     game.overlays.remove('pause');
-                    game.overlays.add('levels');
+                    game.overlays.add('levelSelection');
                   },
                   child: const Text('Levels'),
                 ),

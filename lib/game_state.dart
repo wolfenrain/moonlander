@@ -20,6 +20,12 @@ class GameState {
   /// Current playing state.
   static PlayingState playState = PlayingState.playing;
 
+  ///Current level that is played, if null the leve is not in the DB, check seed
+  static LevelData? currentLevel;
+
+  ///Seed of the current loaded level
+  static late String seed;
+
   /// Show or hide debug infromation of flame.
   static bool showDebugInfo = false;
 

@@ -16,13 +16,16 @@ import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/database.dart';
 import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/game_state.dart';
+import 'package:moonlander/widgets/levels.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
+import 'package:path/path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.setLandscape();
   await Flame.device.fullScreen();
   GameState.database = MoonLanderDatabase();
+  GameState.seed = 'FlameRocks';
   final game = MoonlanderGame();
 
   runApp(
@@ -51,6 +54,9 @@ Future<void> main() async {
         },
         overlayBuilderMap: {
           'pause': (context, MoonlanderGame game) => PauseMenu(game: game),
+          'levelSelection': (context, MoonlanderGame game) => LevelSelection(
+                game,
+              ),
         },
       ),
     ),
@@ -67,9 +73,11 @@ class MoonlanderGame extends FlameGame
   ///Interface to play audio
   late final MoonLanderAudioPlayer audioPlayer;
 
+  late final RocketComponent _rocket;
+
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
-    if (overlays.isActive('pause')) {
+    if (overlays.value.isNotEmpty) {
       pauseEngine();
     } else {
       resumeEngine();
@@ -129,18 +137,18 @@ class MoonlanderGame extends FlameGame
       ),
       margin: const EdgeInsets.only(left: 10, bottom: 10),
     );
-    final rocket = RocketComponent(
+    _rocket = RocketComponent(
       position: size / 2,
       size: Vector2(32, 48),
       joystick: joystick,
     );
 
-    camera.followComponent(rocket);
+    camera.followComponent(_rocket);
 
-    unawaited(add(rocket));
+    unawaited(add(_rocket));
     unawaited(add(joystick));
     unawaited(add(MapComponent()));
-    unawaited(add(RocketInfo(rocket)));
+    unawaited(add(RocketInfo(_rocket)));
     unawaited(
       add(
         PauseComponent(
@@ -151,6 +159,9 @@ class MoonlanderGame extends FlameGame
           sprite: await Sprite.load('PauseButton.png'),
           spritePressed: await Sprite.load('PauseButtonInvert.png'),
           onPressed: () {
+            if (overlays.isActive('levelSelection')) {
+              return;
+            }
             if (overlays.isActive('pause')) {
               overlays.remove('pause');
               if (GameState.playState == PlayingState.paused) {
@@ -167,8 +178,22 @@ class MoonlanderGame extends FlameGame
         ),
       ),
     );
-
     overlays.addListener(onOverlayChanged);
     return super.onLoad();
+  }
+
+  ///Load the level based on the given seed
+  Future<void> loadLevel(String seed) async {
+    restart();
+    GameState.seed = seed;
+    children.removeWhere((element) => element is MapComponent);
+    await add(MapComponent(mapSeed: seed.hashCode));
+    _removeAnyOverlay();
+  }
+
+  void _removeAnyOverlay() {
+    for (final activeOverlay in overlays.value.toList()) {
+      overlays.remove(activeOverlay);
+    }
   }
 }
