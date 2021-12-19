@@ -42,11 +42,11 @@ class LineComponent extends PositionComponent
 
     if (index >= 0) {
       final next = siblings[index + 1];
-      angleValue += ((angle - next.angle) * radians2Degrees) / 180;
+      angleValue += ((angle - next.angle).abs() * radians2Degrees) / 180;
     }
     if (index <= siblings.length - 1) {
       final prev = siblings[index - 1];
-      angleValue += ((prev.angle - angle) * radians2Degrees) / 180;
+      angleValue += ((prev.angle - angle).abs() * radians2Degrees) / 180;
     }
 
     return (baseValue * index * angleValue).toInt();
