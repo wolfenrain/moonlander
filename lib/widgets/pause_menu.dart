@@ -56,6 +56,13 @@ class PauseMenu extends StatelessWidget {
                     game.overlays.add('levelSelection');
                   },
                 ),
+                _getButton(
+                  'Enter seed',
+                  () {
+                    game.overlays.remove('pause');
+                    game.overlays.add('enterSeed');
+                  },
+                ),
               ],
             ),
           ),

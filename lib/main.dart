@@ -16,9 +16,11 @@ import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
 import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/game_state.dart';
+import 'package:moonlander/widgets/enterSeed.dart';
 import 'package:moonlander/widgets/highscore.dart';
 import 'package:moonlander/widgets/levels.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
+import 'package:path/path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +61,7 @@ Future<void> main() async {
               ),
           'highscore': (context, MoonlanderGame game) =>
               HighscoreOverview(game),
+          'enterSeed': (context, MoonlanderGame game) => EnterSeed(game),
         },
       ),
     ),
@@ -91,7 +94,6 @@ class MoonlanderGame extends FlameGame
 
   /// Restart the current level.
   void restart() {
-    // TODO(wolfen): Implement restart of current level.
     GameState.playState = PlayingState.playing;
     (children.firstWhere((child) => child is RocketComponent)
             as RocketComponent)
