@@ -7,6 +7,6 @@ updateScoreForLevel: UPDATE level SET highscore=:newHighscore WHERE id=:levelId;
 
 createANewLevel: INSERT INTO level (seed) VALUES(:newLevelSeed);
 
-createNewHighScoreEntry: INSERT INTO highscore (seed,score) VALUES(:seed,:highscore);
+createNewHighScoreEntry: INSERT INTO highscore (seed,score) VALUES(:seed,:newHighscore);
 
 getTopTenForSeed: SELECT score,creation_date FROM highscore WHERE seed=:seed ORDER BY score DESC LIMIT 10;

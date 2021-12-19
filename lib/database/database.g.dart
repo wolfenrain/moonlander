@@ -503,10 +503,10 @@ abstract class _$MoonLanderDatabase extends GeneratedDatabase {
     );
   }
 
-  Future<int> createNewHighScoreEntry(String seed, int? highscore) {
+  Future<int> createNewHighScoreEntry(String seed, int? newHighscore) {
     return customInsert(
-      'INSERT INTO highscore (seed,score) VALUES(:seed,:highscore)',
-      variables: [Variable<String>(seed), Variable<int?>(highscore)],
+      'INSERT INTO highscore (seed,score) VALUES(:seed,:newHighscore)',
+      variables: [Variable<String>(seed), Variable<int?>(newHighscore)],
       updates: {highscore},
     );
   }
