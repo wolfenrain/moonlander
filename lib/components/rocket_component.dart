@@ -304,19 +304,19 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         // Print side depending on angle (from 0 to 360)
 
         if (angleDeg >= (360 - 45) || angleDeg <= 45) {
-          debugPrint('Hit top');
+          debugPrint('Hit top $angleDeg');
         }
-        if (angleDeg >= 45 && angleDeg <= 135) {
-          debugPrint('Hit right');
+        if (angleDeg >= 45 && angleDeg < 125) {
+          debugPrint('Hit right $angleDeg');
         }
-        if (angleDeg >= 135 && angleDeg <= 225) {
-          debugPrint('Hit bottom');
+        if (angleDeg >= 125 && angleDeg <= 235) {
+          debugPrint('Hit bottom $angleDeg');
           if (other.isGoal && verticalSpeed <= 6) {
             crashed = false;
           }
         }
-        if (angleDeg >= 225 && angleDeg <= 315) {
-          debugPrint('Hit left');
+        if (angleDeg > 235 && angleDeg <= 315) {
+          debugPrint('Hit left $angleDeg');
         }
       }
       if (crashed) {
