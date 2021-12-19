@@ -27,6 +27,7 @@ class LineComponent extends PositionComponent
     style: TextStyle(
       fontSize: 12,
       color: Colors.grey[700],
+      fontFamily: 'AldotheApache',
     ),
   );
 
