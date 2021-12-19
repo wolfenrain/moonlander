@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/main.dart';
 
@@ -23,6 +24,13 @@ class LineComponent extends PositionComponent
     this.isGoal = false,
   });
 
+  final _textPaint = TextPaint(
+    style: const TextStyle(
+      fontSize: 12,
+      color: Colors.grey,
+    ),
+  );
+
   /// The score of this line.
   int get score {
     final siblings = parent?.children.query<LineComponent>();
@@ -32,6 +40,16 @@ class LineComponent extends PositionComponent
     const baseValue = 1;
     final index = siblings.indexOf(this);
     var angleValue = 1;
+
+    if (index == 0) {
+      final next = siblings[index + 1];
+    } else if (index == siblings.length - 1) {
+      final prev = siblings[index - 1];
+    } else {
+      final next = siblings[index + 1];
+      final prev = siblings[index - 1];
+      // next.angle
+    }
 
     return baseValue * index * angleValue;
   }
@@ -92,5 +110,21 @@ class LineComponent extends PositionComponent
       size.toOffset(),
       isGoal ? goalPaint : linePaint,
     );
+
+    if (isGoal) {
+      canvas
+        ..save()
+        ..rotate(-angle);
+      _textPaint.render(
+        canvas,
+        '+$score',
+        Vector2(
+          _textPaint.measureTextWidth('+$score'),
+          5,
+        ),
+        anchor: Anchor.topCenter,
+      );
+      canvas.restore();
+    }
   }
 }
