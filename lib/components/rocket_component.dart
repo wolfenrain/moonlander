@@ -289,8 +289,6 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         final vectorUp = Vector2(0, -1)
           ..rotate(hitBox.parentAngle)
           ..normalize();
-        print('Hitbox angle ${hitBox.parentAngle}');
-        print('Up is $vectorUp');
         final relativeIntersectionPoint =
             (point - hitBox.position).normalized();
         final angle = vectorUp.angleToSigned(relativeIntersectionPoint);
@@ -336,10 +334,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     current = RocketState.idle;
     GameState.playState = PlayingState.won;
     gameRef.overlays.add('pause');
+    _updateScores();
+  }
+
+  void _updateScores() {
     if (GameState.currentLevel != null) {
       GameState.database
           .updateScoreForLevel(GameState.lastScore, GameState.currentLevel!.id);
     }
+    GameState.database
+        .createNewHighScoreEntry(GameState.seed, GameState.lastScore);
   }
 
   void _calculateScore(LineComponent landingSpot) {

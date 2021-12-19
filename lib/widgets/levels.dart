@@ -40,7 +40,7 @@ class _LevelSelectionState extends State<LevelSelection> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       bottom: 15,
                     ),
                     child: Text(
