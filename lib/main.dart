@@ -150,7 +150,7 @@ class MoonlanderGame extends FlameGame
     unawaited(add(_rocket));
     unawaited(add(joystick));
     children.register<MapComponent>();
-    unawaited(add(MapComponent()));
+    unawaited(add(MapComponent(mapSeed: GameState.seed.hashCode)));
     unawaited(add(RocketInfo(_rocket)));
     unawaited(
       add(
