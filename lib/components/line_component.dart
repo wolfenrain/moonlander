@@ -25,9 +25,9 @@ class LineComponent extends PositionComponent
   });
 
   final _textPaint = TextPaint(
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: 12,
-      color: Colors.grey,
+      color: Colors.grey[700],
     ),
   );
 
@@ -39,19 +39,18 @@ class LineComponent extends PositionComponent
     }
     const baseValue = 1;
     final index = siblings.indexOf(this);
-    var angleValue = 1;
+    var angleValue = 1.0;
 
-    if (index == 0) {
+    if (index >= 0) {
       final next = siblings[index + 1];
-    } else if (index == siblings.length - 1) {
+      angleValue += ((angle - next.angle) * radians2Degrees) / 180;
+    }
+    if (index <= siblings.length - 1) {
       final prev = siblings[index - 1];
-    } else {
-      final next = siblings[index + 1];
-      final prev = siblings[index - 1];
-      // next.angle
+      angleValue += ((prev.angle - angle) * radians2Degrees) / 180;
     }
 
-    return baseValue * index * angleValue;
+    return (baseValue * index * angleValue).toInt();
   }
 
   /// Indicates if this line is the end goal or not.
@@ -120,7 +119,7 @@ class LineComponent extends PositionComponent
         '+$score',
         Vector2(
           _textPaint.measureTextWidth('+$score'),
-          5,
+          -_textPaint.measureTextHeight('+$score') - 5,
         ),
         anchor: Anchor.topCenter,
       );
