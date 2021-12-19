@@ -30,34 +30,31 @@ class PauseMenu extends StatelessWidget {
                   ),
                 ),
                 if (GameState.playState == PlayingState.paused)
-                  ElevatedButton(
-                    onPressed: () => game.overlays.remove('pause'),
-                    child: const Text('Resume'),
+                  _getButton(
+                    'Resume',
+                    () => game.overlays.remove('pause'),
                   ),
-                if (GameState.playState == PlayingState.paused)
-                  const Padding(padding: EdgeInsets.only(top: 10)),
-                ElevatedButton(
-                  onPressed: () {
+                _getButton(
+                  'Restart',
+                  () {
                     game.overlays.remove('pause');
                     game.restart();
                   },
-                  child: const Text('Restart'),
                 ),
                 if (GameState.currentLevel != null)
-                  ElevatedButton(
-                    onPressed: () {
+                  _getButton(
+                    'Highscorse',
+                    () {
                       game.overlays.remove('pause');
                       game.overlays.add('highscore');
                     },
-                    child: const Text('Highscorse'),
                   ),
-                const Padding(padding: EdgeInsets.only(top: 10)),
-                ElevatedButton(
-                  onPressed: () {
+                _getButton(
+                  'Levels',
+                  () {
                     game.overlays.remove('pause');
                     game.overlays.add('levelSelection');
                   },
-                  child: const Text('Levels'),
                 ),
               ],
             ),
@@ -65,6 +62,24 @@ class PauseMenu extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _getButton(
+    String label,
+    VoidCallback onPressed, {
+    bool includeTopMargin = true,
+  }) {
+    final button = ElevatedButton(
+      onPressed: onPressed,
+      child: Text(label),
+    );
+    if (includeTopMargin) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: button,
+      );
+    }
+    return button;
   }
 
   String _getTitle() {
