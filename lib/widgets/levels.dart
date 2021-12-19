@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:moonlander/database/database.dart';
-import 'package:moonlander/database/level.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
 
-///Show a level selection screen as a grid with fixed amount of collumns
+/// Show a level selection screen as a grid with fixed amount of columns.
 class LevelSelection extends StatefulWidget {
-  final MoonlanderGame game;
+  /// Show a level selection screen as a grid with fixed amount of columns.
   const LevelSelection(this.game, {Key? key}) : super(key: key);
+
+  /// Reference to the game.
+  final MoonlanderGame game;
 
   @override
   _LevelSelectionState createState() => _LevelSelectionState();

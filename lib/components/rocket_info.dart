@@ -1,8 +1,5 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:moonlander/components/rocket_component.dart';
 
 /// Draw the stats of our rocket.

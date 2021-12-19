@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 ///short hand function to all particel effects for Moonlander
 class ParticelGenerator {

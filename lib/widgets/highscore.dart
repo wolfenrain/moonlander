@@ -1,14 +1,16 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:moonlander/database/database.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
 
+/// Overview widget of all the scores.
 class HighscoreOverview extends StatefulWidget {
-  final MoonlanderGame game;
+/// Overview widget of all the scores.
   const HighscoreOverview(this.game, {Key? key}) : super(key: key);
+
+  /// Reference to the game.
+  final MoonlanderGame game;
 
   @override
   _HighscoreOverviewState createState() => _HighscoreOverviewState();

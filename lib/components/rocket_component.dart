@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
-import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -347,7 +345,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   }
 
   void _calculateScore(LineComponent landingSpot) {
-    final int landingSpotScore = 5;
+    final landingSpotScore = landingSpot.score;
 
     GameState.lastScore =
         (fuel * (_velocity.y.abs() * speed) * landingSpotScore) ~/ _flyingTime;

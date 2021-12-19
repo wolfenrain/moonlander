@@ -23,6 +23,19 @@ class LineComponent extends PositionComponent
     this.isGoal = false,
   });
 
+  /// The score of this line.
+  int get score {
+    final siblings = parent?.children.query<LineComponent>();
+    if (siblings == null) {
+      return 0;
+    }
+    const baseValue = 1;
+    final index = siblings.indexOf(this);
+    var angleValue = 1;
+
+    return baseValue * index * angleValue;
+  }
+
   /// Indicates if this line is the end goal or not.
   final bool isGoal;
 
@@ -49,6 +62,10 @@ class LineComponent extends PositionComponent
 
     // Ensures that lines wont trigger collisions with each other.
     collidableType = CollidableType.passive;
+
+    // Register a query of its siblings for performance reasons.
+    parent?.children.register<LineComponent>();
+    parent?.children.query<LineComponent>();
 
     addHitbox(HitboxRectangle());
   }

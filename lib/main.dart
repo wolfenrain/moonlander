@@ -16,7 +16,7 @@ import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
 import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/game_state.dart';
-import 'package:moonlander/widgets/highscrore.dart';
+import 'package:moonlander/widgets/highscore.dart';
 import 'package:moonlander/widgets/levels.dart';
 import 'package:moonlander/widgets/pause_menu.dart';
 
