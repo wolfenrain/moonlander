@@ -4,7 +4,6 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/main.dart';
 

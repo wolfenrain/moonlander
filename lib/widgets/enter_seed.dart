@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
 
+///Show a screen to enter a seed to start playing it
 class EnterSeed extends StatelessWidget {
-  final MoonlanderGame game;
-  EnterSeed(this.game, {Key? key}) : super(key: key);
-
+  ///Show a screen to enter a seed to start playing it
+  EnterSeed(this._game, {Key? key}) : super(key: key);
+  final MoonlanderGame _game;
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -49,11 +49,11 @@ class EnterSeed extends StatelessWidget {
 
   void _loadLevel(String seed) {
     if (seed.isEmpty) {
-      game.overlays.remove('enterSeed');
-      game.overlays.add('pause');
+      _game.overlays.remove('enterSeed');
+      _game.overlays.add('pause');
     } else {
-      game.loadLevel(seed);
-      game.overlays.remove('enterSeed');
+      _game.loadLevel(seed);
+      _game.overlays.remove('enterSeed');
     }
   }
 }

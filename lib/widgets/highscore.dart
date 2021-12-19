@@ -6,7 +6,7 @@ import 'package:moonlander/main.dart';
 
 /// Overview widget of all the scores.
 class HighscoreOverview extends StatefulWidget {
-/// Overview widget of all the scores.
+  /// Overview widget of all the scores.
   const HighscoreOverview(this.game, {Key? key}) : super(key: key);
 
   /// Reference to the game.
@@ -102,6 +102,7 @@ class _HighscoreOverviewState extends State<HighscoreOverview> {
           itemBuilder: (context, index) {
             final result = scores![index];
             return ListTile(
+              leading: Text('${index + 1}.'),
               title: Text('Score ${result.score.toString()}'),
               subtitle: Text(
                 'From ${dateTimeFormatter.format(

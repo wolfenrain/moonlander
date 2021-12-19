@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/main.dart';
@@ -24,12 +26,14 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    await addAll(
-      TerrainGenerator(
-        size: Vector2(lengthOfMap, grid.y / 3),
-        amountOfLandingSpots: 10,
-        seed: mapSeed,
-      ).generate(),
+    unawaited(
+      addAll(
+        TerrainGenerator(
+          size: Vector2(lengthOfMap, grid.y / 3),
+          amountOfLandingSpots: 10,
+          seed: mapSeed,
+        ).generate(),
+      ),
     );
 
     // Size of a single item in the grid.
