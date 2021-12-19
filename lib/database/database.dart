@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:drift/drift.dart';
+import 'package:moonlander/database/highscore.dart';
 import 'package:moonlander/database/level.dart';
 
 part 'database.g.dart';
@@ -7,6 +8,7 @@ part 'database.g.dart';
 @DriftDatabase(
   tables: [
     Level,
+    Highscore,
   ],
   include: {'level_query.drift'},
 )

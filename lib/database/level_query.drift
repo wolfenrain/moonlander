@@ -1,7 +1,12 @@
 import 'level.dart';
+import 'highscore.dart';
 
 getTopTenScore: SELECT * FROM level WHERE level.highscore <> null ORDER BY level.highscore DESC LIMIT 10;
 
 updateScoreForLevel: UPDATE level SET highscore=:newHighscore WHERE id=:levelId;
 
 createANewLevel: INSERT INTO level (seed) VALUES(:newLevelSeed);
+
+createNewHighScoreEntry: INSERT INTO highscore (seed,score) VALUES(:seed,:highscore);
+
+getTopTenForSeed: SELECT score,creation_date FROM highscore WHERE seed=:seed ORDER BY score DESC LIMIT 10;
