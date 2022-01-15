@@ -78,6 +78,9 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
 
   ///Fuel remaning
   double get fuel => _fuel;
+  set fuel(double value) {
+    _fuel = value;
+  }
 
   ///Velocity of the rocket
   Vector2 get velocity => _velocity;

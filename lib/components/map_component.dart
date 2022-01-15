@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:moonlander/components/powerup_component.dart';
 import 'package:moonlander/main.dart';
 import 'package:moonlander/terrain_generator.dart';
 
@@ -25,19 +26,20 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
+    children.register<PowerupComponent>();
+    // Size of a single item in the grid.
+    final itemSize = gameRef.size.clone()..divide(MapComponent.grid);
     unawaited(
       addAll(
         TerrainGenerator(
           size: Vector2(lengthOfMap, grid.y / 3),
           amountOfLandingSpots: 10,
+          amountOfPowerups: 5,
+          maxPowerupHeight: (grid.y - 15).toInt(),
           seed: mapSeed,
-        ).generate(),
+        ).generate(itemSize),
       ),
     );
-
-    // Size of a single item in the grid.
-    final itemSize = gameRef.size.clone()..divide(MapComponent.grid);
 
     // Set the world bounds to the max size of the map.
     gameRef.camera.worldBounds = Rect.fromLTWH(
@@ -52,6 +54,13 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
   void render(Canvas canvas) {
     super.render(canvas);
     drawGrid(canvas);
+  }
+
+  ///Reset all powerups of the current map
+  void resetPowerups() {
+    children.query<PowerupComponent>().forEach((element) {
+      element.used = false;
+    });
   }
 
   /// If in debug mode draws the grid.

@@ -1,8 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:drift/drift.dart';
+import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:moonlander/components/line_component.dart';
+import 'package:moonlander/components/powerup_fuel_component.dart';
 
 /// Terrain generator.
 ///
@@ -15,6 +18,8 @@ class TerrainGenerator {
     required this.size,
     this.seed,
     required this.amountOfLandingSpots,
+    required this.amountOfPowerups,
+    required this.maxPowerupHeight,
   });
 
   /// Determines the max step.
@@ -26,6 +31,12 @@ class TerrainGenerator {
   /// Amount of landing spots the terrain will generate.
   final int amountOfLandingSpots;
 
+  ///Amount of powerups
+  final int amountOfPowerups;
+
+  ///Maximum powerup height
+  final int maxPowerupHeight;
+
   /// Size of the terrain.
   final Vector2 size;
 
@@ -33,7 +44,7 @@ class TerrainGenerator {
   final int? seed;
 
   /// Generate list of points that represent the terrain.
-  List<LineComponent> generate() {
+  List<PositionComponent> generate(Vector2 itemSize) {
     final random = Random(seed);
 
     // The initial starting values.
@@ -50,6 +61,21 @@ class TerrainGenerator {
         landingSpots.add(index);
       }
     }
+    final powerUps = <PositionComponent>[];
+    while (powerUps.length < amountOfPowerups) {
+      final x = random.nextInt(size.x.toInt());
+      if (!powerUps.any((element) => element.position.x == x)) {
+        powerUps.add(
+          PowerupFuelComponent(
+            position: Vector2(
+              x.toDouble() * itemSize.x,
+              random.nextInt(maxPowerupHeight).toDouble() * itemSize.y,
+            ),
+          ),
+        );
+      }
+    }
+
     for (var x = 0.0; x <= size.x; x++) {
       if (landingSpots.contains(x)) {
         points.add(Vector2(x, height));
@@ -88,6 +114,7 @@ class TerrainGenerator {
           points[i],
           isGoal: landingSpots.contains(i),
         ),
+      ...powerUps
     ];
   }
 }
