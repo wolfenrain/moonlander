@@ -1,15 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
 
 /// By using the Flutter Widgets we can handle all non-game related UI through
 /// widgets.
-class PauseMenu extends StatelessWidget {
-  ///
-  const PauseMenu({Key? key, required this.game}) : super(key: key);
 
+class PauseMenu extends StatefulWidget {
   /// The reference to the game.
   final MoonlanderGame game;
+  const PauseMenu({Key? key, required this.game}) : super(key: key);
+
+  @override
+  _PauseMenuState createState() => _PauseMenuState();
+}
+
+class _PauseMenuState extends State<PauseMenu> {
+  late final BannerAd banner;
+  final listener = BannerAdListener(
+    // Called when an ad is successfully received.
+    onAdLoaded: (Ad ad) => print('Ad loaded.'),
+    // Called when an ad request failed.
+    onAdFailedToLoad: (Ad ad, LoadAdError error) {
+      // Dispose the ad here to free resources.
+      ad.dispose();
+      print('Ad failed to load: $error');
+    },
+    // Called when an ad opens an overlay that covers the screen.
+    onAdOpened: (Ad ad) => print('Ad opened.'),
+    // Called when an ad removes an overlay that covers the screen.
+    onAdClosed: (Ad ad) => print('Ad closed.'),
+    // Called when an impression occurs on the ad.
+    onAdImpression: (Ad ad) => print('Ad impression.'),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    banner = BannerAd(
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: listener,
+    );
+    banner.load();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,42 +67,52 @@ class PauseMenu extends StatelessWidget {
                 if (GameState.playState == PlayingState.paused)
                   _getButton(
                     'Resume',
-                    () => game.overlays.remove('pause'),
+                    () => widget.game.overlays.remove('pause'),
                   ),
                 _getButton(
                   'Restart',
                   () {
-                    game.overlays.remove('pause');
-                    game.restart();
+                    widget.game.overlays.remove('pause');
+                    widget.game.restart();
                   },
                 ),
                 if (GameState.currentLevel != null)
                   _getButton(
                     'Highscorse',
                     () {
-                      game.overlays.remove('pause');
-                      game.overlays.add('highscore');
+                      widget.game.overlays.remove('pause');
+                      widget.game.overlays.add('highscore');
                     },
                   ),
                 _getButton(
                   'Levels',
                   () {
-                    game.overlays.remove('pause');
-                    game.overlays.add('levelSelection');
+                    widget.game.overlays.remove('pause');
+                    widget.game.overlays.add('levelSelection');
                   },
                 ),
                 _getButton(
                   'Enter seed',
                   () {
-                    game.overlays.remove('pause');
-                    game.overlays.add('enterSeed');
+                    widget.game.overlays.remove('pause');
+                    widget.game.overlays.add('enterSeed');
                   },
                 ),
+                _getBannerAd(),
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _getBannerAd() {
+    return Container(
+      alignment: Alignment.center,
+      width: banner.size.width.toDouble(),
+      height: banner.size.height.toDouble(),
+      child: AdWidget(ad: banner),
     );
   }
 

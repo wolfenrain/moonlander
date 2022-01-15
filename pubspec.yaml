@@ -12,10 +12,12 @@ dependencies:
   flame_audio: ^1.0.0
   flutter:
     sdk: flutter
+  google_mobile_ads: ^1.0.1
   intl: ^0.17.0
   path: ^1.8.1
   path_provider: ^2.0.8
   sqlite3_flutter_libs: ^0.5.3
+  
 
 dev_dependencies:
   build_runner: ^2.1.7
