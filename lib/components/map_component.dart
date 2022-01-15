@@ -35,9 +35,9 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
           size: Vector2(lengthOfMap, grid.y / 3),
           amountOfLandingSpots: 10,
           amountOfPowerups: 5,
-          maxPowerupHeight: (grid.y - 15).toInt(),
+          maxPowerupHeight: (grid.y - 5).toInt(),
           seed: mapSeed,
-        ).generate(itemSize),
+        ).generate(itemSize, gameRef.size.clone()),
       ),
     );
 

@@ -20,7 +20,9 @@ class TerrainGenerator {
     required this.amountOfLandingSpots,
     required this.amountOfPowerups,
     required this.maxPowerupHeight,
-  });
+  }) {
+    _random = Random(seed);
+  }
 
   /// Determines the max step.
   final double maxStep;
@@ -43,33 +45,37 @@ class TerrainGenerator {
   /// Seed used for the [Random]ness.
   final int? seed;
 
-  /// Generate list of points that represent the terrain.
-  List<PositionComponent> generate(Vector2 itemSize) {
-    final random = Random(seed);
+  late final Random _random;
 
+  /// Generate list of points that represent the terrain.
+  List<PositionComponent> generate(
+    Vector2 itemSize,
+    Vector2 gamzeSize,
+  ) {
     // The initial starting values.
-    var height = random.nextDouble() * size.y;
+    var height = _random.nextDouble() * size.y;
     //Keep the slope in the range of -maxStep to maxStep
-    var slope = lerpDouble(-maxStep, maxStep, random.nextDouble())!;
+    var slope = lerpDouble(-maxStep, maxStep, _random.nextDouble())!;
 
     final points = <Vector2>[];
 
     final landingSpots = <int>[];
     while (landingSpots.length < amountOfLandingSpots) {
-      final index = random.nextInt(size.x.toInt());
+      final index = _random.nextInt(size.x.toInt());
       if (!landingSpots.contains(index)) {
         landingSpots.add(index);
       }
     }
     final powerUps = <PositionComponent>[];
     while (powerUps.length < amountOfPowerups) {
-      final x = random.nextInt(size.x.toInt());
+      final x = _random.nextInt(size.x.toInt());
       if (!powerUps.any((element) => element.position.x == x)) {
         powerUps.add(
           PowerupFuelComponent(
             position: Vector2(
               x.toDouble() * itemSize.x,
-              random.nextInt(maxPowerupHeight).toDouble() * itemSize.y,
+              gamzeSize.y -
+                  (_nextBetween(size.y.toInt(), maxPowerupHeight) * itemSize.y),
             ),
           ),
         );
@@ -86,7 +92,7 @@ class TerrainGenerator {
       height += slope;
 
       // Update the slope by a random step change.
-      slope += lerpDouble(-stepChange, stepChange, random.nextDouble())!;
+      slope += lerpDouble(-stepChange, stepChange, _random.nextDouble())!;
 
       // Clamp the slope to the max step.
       slope = slope.clamp(-maxStep, maxStep);
@@ -117,4 +123,6 @@ class TerrainGenerator {
       ...powerUps
     ];
   }
+
+  int _nextBetween(int min, int max) => min + _random.nextInt(max - min);
 }
