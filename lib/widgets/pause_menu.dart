@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:moonlander/game_state.dart';
@@ -37,13 +38,15 @@ class _PauseMenuState extends State<PauseMenu> {
   @override
   void initState() {
     super.initState();
-    banner = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: listener,
-    );
-    banner.load();
+    if (!kIsWeb) {
+      banner = BannerAd(
+        adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+        size: AdSize.banner,
+        request: const AdRequest(),
+        listener: listener,
+      );
+      banner.load();
+    }
   }
 
   @override
@@ -98,7 +101,7 @@ class _PauseMenuState extends State<PauseMenu> {
                     widget.game.overlays.add('enterSeed');
                   },
                 ),
-                _getBannerAd(),
+                if (!kIsWeb) _getBannerAd(),
               ],
             ),
           ),

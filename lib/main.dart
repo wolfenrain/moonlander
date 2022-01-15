@@ -6,6 +6,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:moonlander/components/audio_player.dart';
@@ -30,7 +31,10 @@ Future<void> main() async {
   GameState.database = constructDb();
   GameState.seed = 'FlameRocks';
   final game = MoonlanderGame();
-  await MobileAds.instance.initialize();
+  if(!kIsWeb){
+    await MobileAds.instance.initialize();
+  }
+  
 
   runApp(
     MaterialApp(
