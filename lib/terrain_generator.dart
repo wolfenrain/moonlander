@@ -69,7 +69,8 @@ class TerrainGenerator {
     final powerUps = <PositionComponent>[];
     while (powerUps.length < amountOfPowerups) {
       final x = _random.nextInt(size.x.toInt());
-      if (!powerUps.any((element) => element.position.x == x)) {
+      if (!powerUps
+          .any((element) => element.position.x == x.toDouble() * itemSize.x)) {
         powerUps.add(
           PowerupFuelComponent(
             position: Vector2(
