@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -40,7 +42,9 @@ class _PauseMenuState extends State<PauseMenu> {
     super.initState();
     if (!kIsWeb) {
       banner = BannerAd(
-        adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+        adUnitId: Platform.isIOS
+            ? 'ca-app-pub-3940256099942544/2934735716'
+            : 'ca-app-pub-3940256099942544/6300978111',
         size: AdSize.banner,
         request: const AdRequest(),
         listener: listener,
