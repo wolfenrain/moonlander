@@ -22,6 +22,7 @@ class TerrainGenerator {
     required this.maxPowerupHeight,
   }) {
     _random = Random(seed);
+    assert(size.y < maxPowerupHeight, 'MaxPowerupHeight must be above size.y');
   }
 
   /// Determines the max step.

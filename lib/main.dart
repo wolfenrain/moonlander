@@ -31,10 +31,9 @@ Future<void> main() async {
   GameState.database = constructDb();
   GameState.seed = 'FlameRocks';
   final game = MoonlanderGame();
-  if(!kIsWeb){
+  if (!kIsWeb) {
     await MobileAds.instance.initialize();
   }
-  
 
   runApp(
     MaterialApp(
@@ -85,6 +84,9 @@ class MoonlanderGame extends FlameGame
   late final MoonLanderAudioPlayer audioPlayer;
 
   late final RocketComponent _rocket;
+
+  ///The rocket component currnetly in the game
+  RocketComponent get rocket => _rocket;
 
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
@@ -155,38 +157,37 @@ class MoonlanderGame extends FlameGame
     );
 
     camera.followComponent(_rocket);
-    unawaited(add(_rocket));
-    unawaited(add(joystick));
+    await add(_rocket);
+    await add(joystick);
     children.register<MapComponent>();
-    unawaited(add(MapComponent(mapSeed: GameState.seed.hashCode)));
-    unawaited(add(RocketInfo(_rocket)));
-    unawaited(
-      add(
-        PauseComponent(
-          margin: const EdgeInsets.only(
-            top: 10,
-            left: 5,
-          ),
-          sprite: await Sprite.load('PauseButton.png'),
-          spritePressed: await Sprite.load('PauseButtonInvert.png'),
-          onPressed: () {
-            if (overlays.isActive('levelSelection')) {
-              return;
-            }
-            if (overlays.isActive('pause')) {
-              overlays.remove('pause');
-              if (GameState.playState == PlayingState.paused) {
-                GameState.playState = PlayingState.playing;
-              }
-            } else {
-              if (GameState.playState == PlayingState.playing) {
-                GameState.playState = PlayingState.paused;
-              }
+    await add(MapComponent(mapSeed: GameState.seed.hashCode));
+    await add(RocketInfo(_rocket));
 
-              overlays.add('pause');
-            }
-          },
+    await add(
+      PauseComponent(
+        margin: const EdgeInsets.only(
+          top: 10,
+          left: 5,
         ),
+        sprite: await Sprite.load('PauseButton.png'),
+        spritePressed: await Sprite.load('PauseButtonInvert.png'),
+        onPressed: () {
+          if (overlays.isActive('levelSelection')) {
+            return;
+          }
+          if (overlays.isActive('pause')) {
+            overlays.remove('pause');
+            if (GameState.playState == PlayingState.paused) {
+              GameState.playState = PlayingState.playing;
+            }
+          } else {
+            if (GameState.playState == PlayingState.playing) {
+              GameState.playState = PlayingState.paused;
+            }
+
+            overlays.add('pause');
+          }
+        },
       ),
     );
     overlays.addListener(onOverlayChanged);
