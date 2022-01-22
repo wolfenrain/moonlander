@@ -25,6 +25,15 @@ void main() {
     var amountOfPowerUps = 10;
     var amountOfLandingSpots = 10;
     var maxPowerupHeight = 40;
+
+    //Back to default
+    tearDown(() {
+      gameSize = Vector2(30, 20);
+      amountOfPowerUps = 10;
+      amountOfLandingSpots = 10;
+      maxPowerupHeight = 40;
+    });
+
     test('ensure terrain is created', () {
       final terrainGenerator = createTestGenerator(
         amountOfLandingSpots,
@@ -52,7 +61,7 @@ void main() {
         failsAssert('MaxPowerupHeight must be above size.y'),
       );
     });
-    
+
     test('ensure terrain has all powerups', () {
       amountOfPowerUps = 15;
       final terrainGenerator = createTestGenerator(
