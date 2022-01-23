@@ -6,7 +6,7 @@ A 2D Lunar lander game made with the [Flame Engine](https://flame-engine.org).
 
 ## Introduction
 
-This game was developed as an article series done by [DevOwl](https://twitter.com/RealDevOwl) and [wolfenrain](https://twitter.com/wolfenrain).
+This game was developed as a collaboration between [DevOwl](https://twitter.com/RealDevOwl) and [wolfenrain](https://twitter.com/wolfenrain) to showcase what Flame is capable of.
 
 If you wish to read the articles series, here is an overview of all the articles:
 
