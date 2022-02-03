@@ -2,11 +2,10 @@
 
 import 'package:flame/game.dart';
 import 'package:flame_test/flame_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/powerup_component.dart';
-import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:moonlander/terrain_generator.dart';
 
 final fixedGameSize = Vector2(
@@ -90,14 +89,19 @@ void main() {
         Vector2(600, 800),
       );
       expect(
-          result.whereType<LineComponent>().where((line) => line.isGoal).length,
-          amountOfLandingSpots);
+        result.whereType<LineComponent>().where((line) => line.isGoal).length,
+        amountOfLandingSpots,
+      );
     });
   });
 }
 
-TerrainGenerator createTestGenerator(int amountOfLandingSpots,
-        int amountOfPowerUps, int maxPowerupHeight, Vector2 gameSize) =>
+TerrainGenerator createTestGenerator(
+  int amountOfLandingSpots,
+  int amountOfPowerUps,
+  int maxPowerupHeight,
+  Vector2 gameSize,
+) =>
     TerrainGenerator(
       seed: 'tesing rulez'.hashCode,
       amountOfLandingSpots: amountOfLandingSpots,

@@ -1,9 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:drift/drift.dart';
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/powerup_fuel_component.dart';
 

@@ -10,16 +10,21 @@ import 'package:moonlander/main.dart';
 /// widgets.
 
 class PauseMenu extends StatefulWidget {
+  /// Requires the game to know what it will pause.
+  const PauseMenu({Key? key, required this.game}) : super(key: key);
+
   /// The reference to the game.
   final MoonlanderGame game;
-  const PauseMenu({Key? key, required this.game}) : super(key: key);
 
   @override
   _PauseMenuState createState() => _PauseMenuState();
 }
 
 class _PauseMenuState extends State<PauseMenu> {
+  /// The ad banner.
   late final BannerAd banner;
+
+  /// Used to listen when an ad loads or not.
   final listener = BannerAdListener(
     // Called when an ad is successfully received.
     onAdLoaded: (Ad ad) => print('Ad loaded.'),

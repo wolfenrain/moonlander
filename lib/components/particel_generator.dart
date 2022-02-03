@@ -16,7 +16,7 @@ class ParticelGenerator {
         //Create a downards shooting particel
         speed: Vector2(
           _random.nextDouble() * 200 - 100,
-          -max(_random.nextDouble(), 0.1) * 100,
+          max(_random.nextDouble(), 0.1) * 100,
         ),
         child: CircleParticle(
           radius: 1,

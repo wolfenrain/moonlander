@@ -6,14 +6,13 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:moonlander/components/audio_player.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
-import 'package:moonlander/components/powerup_component.dart';
-import 'package:moonlander/components/powerup_fuel_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
@@ -74,7 +73,7 @@ Future<void> main() async {
 }
 
 /// This class encapulates the whole game.
-class MoonlanderGame extends FlameGame
+class MoonlanderGame extends Forge2DGame
     with
         HasCollidables,
         HasTappables,
@@ -130,6 +129,7 @@ class MoonlanderGame extends FlameGame
       rows: 1,
     );
     camera.viewport = FixedVerticalResolutionViewport(800);
+    camera.zoom = 1;
     //Init and load the audio assets
     audioPlayer = MoonLanderAudioPlayer();
     await audioPlayer.loadAssets();
@@ -151,12 +151,12 @@ class MoonlanderGame extends FlameGame
       margin: const EdgeInsets.only(left: 10, bottom: 10),
     );
     _rocket = RocketComponent(
-      position: size / 2,
+      position: Vector2(size.x / 2, -size.y / 2),
       size: Vector2(32, 48),
       joystick: joystick,
     );
 
-    camera.followComponent(_rocket);
+    camera.followComponent(_rocket.positionComponent!);
     await add(_rocket);
     await add(joystick);
     children.register<MapComponent>();

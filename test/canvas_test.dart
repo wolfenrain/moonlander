@@ -2,14 +2,11 @@
 
 import 'package:canvas_test/canvas_test.dart';
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
 import 'package:flame_test/flame_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:moonlander/components/line_component.dart';
-import 'package:moonlander/game_state.dart';
-import 'package:moonlander/main.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:moonlander/components/line_component.dart';
+import 'package:moonlander/main.dart';
 
 final fixedGameSize = Vector2(
   800,

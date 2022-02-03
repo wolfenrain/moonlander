@@ -62,7 +62,7 @@ abstract class PowerupComponent extends SpriteComponent
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     if (_used) return;
     if (other is RocketComponent) {
-      onPlayerContact(other);
+      // onPlayerContact(other);
       used = true;
     }
   }

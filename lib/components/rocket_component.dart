@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flame_forge2d/position_body_component.dart';
 import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/map_component.dart';
@@ -46,15 +46,17 @@ enum RocketHeading {
   idle,
 }
 
-/// A component that renders the Rocket with the different states.
-class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
-    with HasHitboxes, Collidable, HasGameRef<MoonlanderGame> {
+/// Component that keeps track of our rocket body.
+class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   /// Create a new Rocket component at the given [position].
   RocketComponent({
     required Vector2 position,
     required Vector2 size,
     required this.joystick,
-  }) : super(position: position, size: size, animations: {});
+  }) : super(
+          positionComponent: _RocketComponent(position: position, size: size),
+          size: size,
+        );
 
   /// Joystick that controls this rocket.
   final JoystickComponent joystick;
@@ -64,8 +66,6 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   var _engineSoundCounter = 0.2;
   final _animationSpeed = .1;
   var _animationTime = 0.0;
-  final _velocity = Vector2.zero();
-  final _gravity = Vector2(0, 1);
   var _collisionActive = false;
 
   final _fuelUsageBySecond = 10;
@@ -74,7 +74,19 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   double _fuel = 100;
 
   ///Acceleration factor of the rocket
-  final speed = 5;
+  final double speed = 5;
+
+  /// Wrapper around the rocket state for rendering.
+  RocketState? get current => (positionComponent! as _RocketComponent).current;
+  set current(RocketState? state) {
+    (positionComponent! as _RocketComponent).current = state;
+  }
+
+  /// Wrapper around the position of the rocket.
+  Vector2 get position => (positionComponent! as _RocketComponent).position;
+  set position(Vector2 position) {
+    (positionComponent! as _RocketComponent).position = position;
+  }
 
   ///Fuel remaning
   double get fuel => _fuel;
@@ -82,41 +94,28 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     _fuel = value;
   }
 
-  ///Velocity of the rocket
-  Vector2 get velocity => _velocity;
-
   double _flyingTime = 0;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    //Rocket sprite sheet with animation groups
-    const stepTime = .3;
-    const frameCount = 2;
-    final image = await gameRef.images.load('ship_spritesheet.png');
-    final sheet = SpriteSheet.fromColumnsAndRows(
-      image: image,
-      columns: frameCount,
-      rows: RocketState.values.length,
-    );
 
-    final idle = sheet.createAnimation(row: 0, stepTime: stepTime);
-    final upDown = sheet.createAnimation(row: 1, stepTime: stepTime);
-    final left = sheet.createAnimation(row: 2, stepTime: stepTime);
-    final right = sheet.createAnimation(row: 3, stepTime: stepTime);
-    final farRight = sheet.createAnimation(row: 4, stepTime: stepTime);
-    final farLeft = sheet.createAnimation(row: 5, stepTime: stepTime);
-    animations = {
-      RocketState.idle: idle,
-      RocketState.upDown: upDown,
-      RocketState.left: left,
-      RocketState.right: right,
-      RocketState.farLeft: farLeft,
-      RocketState.farRight: farRight
-    };
-    current = RocketState.idle;
-    addHitbox(HitboxRectangle(relation: Vector2(0.95, 0.5)));
-    _particelOffset = Vector2(size.x * 0.4, size.y * 0.8);
+    _particelOffset = Vector2(0, size.y * 0.15);
+  }
+
+  @override
+  Body createBody() {
+    final shape = CircleShape()..radius = size.x;
+    final fixtureDef = FixtureDef(shape)
+      ..userData = this // To be able to determine object in collision
+      ..restitution = 0.8
+      ..density = 1.0
+      ..friction = 0.2;
+
+    final bodyDef = BodyDef()
+      ..position = position
+      ..type = BodyType.dynamic;
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
   bool get _isJoyStickIdle => joystick.direction == JoystickDirection.idle;
@@ -128,13 +127,14 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (current != RocketState.idle) {
           if (current == RocketState.farLeft) {
             current = RocketState.left;
-            angle = radians(-7.5);
+            body.angularVelocity = radians(-7.5);
           } else if (current == RocketState.farRight) {
             current = RocketState.right;
-            angle = radians(7.5);
+            body.angularVelocity = radians(7.5);
           } else {
             current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
-            angle = radians(0);
+            body.angularVelocity = radians(0);
+            // angle = radians(0);
           }
         } else {
           current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
@@ -144,16 +144,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (current != RocketState.farLeft) {
           if (current == RocketState.farRight) {
             current = RocketState.right;
-            angle = radians(7.5);
+            // angle = radians(7.5);
           } else if (current == RocketState.right) {
             current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
-            angle = radians(0);
+            // angle = radians(0);
           } else if (current == RocketState.idle) {
             current = RocketState.left;
-            angle = radians(-7.5);
+            // angle = radians(-7.5);
           } else {
             current = RocketState.farLeft;
-            angle = radians(-15);
+            // angle = radians(-15);
           }
         }
         break;
@@ -161,16 +161,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
         if (current != RocketState.farRight) {
           if (current == RocketState.farLeft) {
             current = RocketState.left;
-            angle = radians(-7.5);
+            // angle = radians(-7.5);
           } else if (current == RocketState.left) {
             current = _isJoyStickIdle ? RocketState.idle : RocketState.upDown;
-            angle = radians(0);
+            // angle = radians(0);
           } else if (current == RocketState.idle) {
             current = RocketState.right;
-            angle = radians(7.5);
+            // angle = radians(7.5);
           } else {
             current = RocketState.farRight;
-            angle = radians(15);
+            // angle = radians(15);
           }
         }
         break;
@@ -191,7 +191,7 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     if (!joystick.delta.isZero()) {
       final joyStickDelta = joystick.delta.clone();
       joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0);
-      _velocity.add(joyStickDelta.normalized() * (speed * dt));
+      body.applyLinearImpulse(joyStickDelta * speed);
       _fuel -= _fuelUsageBySecond * dt;
       if (_fuel < 0) {
         _loose();
@@ -209,16 +209,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     final maxSpeed = gameRef.size.clone()
       ..divide(MapComponent.grid)
       ..scale(2)
-      ..divide(Vector2.all(speed.toDouble()));
+      ..divide(Vector2.all(speed));
 
-    final gravityChange = _gravity.normalized() * (dt * 0.8);
-
-    _velocity
-      ..add(gravityChange)
-      ..clamp(
-        maxSpeed.scaled(-1),
-        maxSpeed,
-      );
+    body.linearVelocity.clamp(
+      maxSpeed.scaled(-1),
+      maxSpeed,
+    );
   }
 
   @override
@@ -252,15 +248,16 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     _updateVelocity(dt);
 
     final worldBounds = gameRef.camera.worldBounds!;
-    final nextPosition = position + _velocity;
+    final nextPosition = position + body.linearVelocity;
 
     // Check if the next position is within the world bounds on the X axis.
     // If it is we set the position to it, otherwise we set velocity to 0.
+    // TODO(wolfen): I think Forge2D can handle this?
     if (worldBounds.left <= nextPosition.x &&
         nextPosition.x + size.x <= worldBounds.right) {
       position.x = nextPosition.x;
     } else {
-      _velocity.x = 0;
+      body.linearVelocity.x = 0;
     }
 
     // Check if the next position is within the world bounds on the y axis.
@@ -276,61 +273,9 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     }
   }
 
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (_collisionActive) {
-      return;
-    }
-    var crashed = true;
-    if (other is LineComponent) {
-      final hitBox = hitboxes.first;
-
-      for (final point in intersectionPoints) {
-        // Calculate which side of the hitbox had the collision
-        final vectorUp = Vector2(0, -1)
-          ..rotate(hitBox.parentAngle)
-          ..normalize();
-        final relativeIntersectionPoint =
-            (point - hitBox.position).normalized();
-        final angle = vectorUp.angleToSigned(relativeIntersectionPoint);
-        var angleDeg = degrees(angle);
-        debugPrint(other.isGoal ? 'Hit goal' : 'Hit no goal');
-        final verticalSpeed = _velocity.y.abs() * speed;
-        debugPrint('Vertical on hit: $verticalSpeed');
-        // Fix for the angleToSigned method returning values form -180 to 180
-        if (angleDeg < 0) angleDeg = 360 + angleDeg;
-
-        // Print side depending on angle (from 0 to 360)
-
-        if (angleDeg >= (360 - 45) || angleDeg <= 45) {
-          debugPrint('Hit top $angleDeg');
-        }
-        if (angleDeg >= 45 && angleDeg < 125) {
-          debugPrint('Hit right $angleDeg');
-        }
-        if (angleDeg >= 125 && angleDeg <= 235) {
-          debugPrint('Hit bottom $angleDeg');
-          if (other.isGoal && verticalSpeed <= 6) {
-            crashed = false;
-          }
-        }
-        if (angleDeg > 235 && angleDeg <= 315) {
-          debugPrint('Hit left $angleDeg');
-        }
-      }
-      if (crashed) {
-        _loose();
-      } else {
-        _win(other);
-      }
-    }
-
-    super.onCollision(intersectionPoints, other);
-  }
-
   void _win(LineComponent landingSpot) {
     _calculateScore(landingSpot);
-    _velocity.scale(0);
+    body.linearVelocity.scale(0);
     _collisionActive = true;
     current = RocketState.idle;
     GameState.playState = PlayingState.won;
@@ -351,11 +296,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     final landingSpotScore = landingSpot.score;
 
     GameState.lastScore =
-        (fuel * (_velocity.y.abs() * speed) * landingSpotScore) ~/ _flyingTime;
+        (fuel * (body.linearVelocity.y.abs() * speed) * landingSpotScore) ~/
+            _flyingTime;
   }
 
   void _loose() {
-    _velocity.scale(0); // Stop any movement
+    body.linearVelocity.scale(0); // Stop any movement
     _collisionActive = true;
     current = RocketState.idle;
     // For now you can only lose
@@ -375,10 +321,52 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   void reset() {
     position = gameRef.size / 2;
     _collisionActive = false;
-    _velocity.scale(0);
+    body.linearVelocity.scale(0);
     current = RocketState.idle;
-    angle = 0;
     _fuel = 100;
     _flyingTime = 0;
+  }
+}
+
+/// A component that renders the Rocket with the different states.
+class _RocketComponent extends SpriteAnimationGroupComponent<RocketState>
+    with HasGameRef<MoonlanderGame> {
+  /// Create a new Rocket component at the given [position].
+  _RocketComponent({
+    required Vector2 position,
+    required Vector2 size,
+  }) : super(position: position, size: size, animations: {});
+
+  ///Acceleration factor of the rocket
+  final speed = 5;
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    //Rocket sprite sheet with animation groups
+    const stepTime = .3;
+    const frameCount = 2;
+    final image = await gameRef.images.load('ship_spritesheet.png');
+    final sheet = SpriteSheet.fromColumnsAndRows(
+      image: image,
+      columns: frameCount,
+      rows: RocketState.values.length,
+    );
+
+    final idle = sheet.createAnimation(row: 0, stepTime: stepTime);
+    final upDown = sheet.createAnimation(row: 1, stepTime: stepTime);
+    final left = sheet.createAnimation(row: 2, stepTime: stepTime);
+    final right = sheet.createAnimation(row: 3, stepTime: stepTime);
+    final farRight = sheet.createAnimation(row: 4, stepTime: stepTime);
+    final farLeft = sheet.createAnimation(row: 5, stepTime: stepTime);
+    animations = {
+      RocketState.idle: idle,
+      RocketState.upDown: upDown,
+      RocketState.left: left,
+      RocketState.right: right,
+      RocketState.farLeft: farLeft,
+      RocketState.farRight: farRight
+    };
+    current = RocketState.idle;
   }
 }
