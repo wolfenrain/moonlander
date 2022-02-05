@@ -26,24 +26,31 @@ class RocketInfo extends PositionComponent with HasGameRef {
     _text = 'Fuel: 100 % \n'
         'Vertical speed: -99.00\n'
         'Horizontal speed: -99.00';
-    final textSize = _textRenderer.measureText(_text);
-    size = textSize;
-    position = Vector2(gameRef.size.x / 2 - size.x / 2, textSize.y / 3);
+
     positionType = PositionType.viewport;
+    resize();
     return super.onLoad();
+  }
+
+  ///Set the size and position based on text and screen
+  void resize() {
+    final textSize = _textRenderer.measureText('Fuel: 100 % \n'
+        'Vertical speed: -99.00\n'
+        'Horizontal speed: -99.00');
+    size = textSize;
+    final screenSize = gameRef.canvasSize;
+    position = Vector2(screenSize.x / 2 - size.x / 2, textSize.y / 3);
   }
 
   @override
   void update(double dt) {
-    final actualSpeed = _rocket.body.linearVelocity.scaled(
-      _rocket.speed.toDouble(),
-    );
+    super.update(dt);
+    final actualSpeed = _rocket.body.linearVelocity;
     _text = '''
 Fuel: ${_guiNumber(_rocket.fuel)} %
 Horizontal speed: ${_guiNumber(actualSpeed.x)}
-Vertical speed: ${_guiNumber(actualSpeed.y * -1)}
+Vertical speed: ${_guiNumber(actualSpeed.y)}
 ''';
-    super.update(dt);
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -6,6 +7,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_forge2d/position_body_component.dart';
+import 'package:flutter/material.dart';
 import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
 import 'package:moonlander/components/map_component.dart';
@@ -74,7 +76,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   double _fuel = 100;
 
   ///Acceleration factor of the rocket
-  final double speed = 5;
+  final double speed = 0.1;
 
   /// Wrapper around the rocket state for rendering.
   RocketState? get current => (positionComponent! as _RocketComponent).current;
@@ -91,7 +93,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   ///Fuel remaning
   double get fuel => _fuel;
   set fuel(double value) {
-    _fuel = value;
+    _fuel = min(value, 100);
   }
 
   double _flyingTime = 0;
@@ -99,13 +101,12 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
-    _particelOffset = Vector2(0, size.y * 0.15);
+    _particelOffset = Vector2(0, size.y * 0.2);
   }
 
   @override
   Body createBody() {
-    final shape = CircleShape()..radius = size.x;
+    final shape = CircleShape()..radius = size.x / 2;
     final fixtureDef = FixtureDef(shape)
       ..userData = this // To be able to determine object in collision
       ..restitution = 0.8
@@ -113,7 +114,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
       ..friction = 0.2;
 
     final bodyDef = BodyDef()
-      ..position = position
+      ..position = position.clone()
       ..type = BodyType.dynamic;
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
@@ -190,7 +191,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
     _flyingTime += dt;
     if (!joystick.delta.isZero()) {
       final joyStickDelta = joystick.delta.clone();
-      joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0);
+      joyStickDelta.y = joyStickDelta.y.clamp(-1 * double.infinity, 0) * -1;
       body.applyLinearImpulse(joyStickDelta * speed);
       _fuel -= _fuelUsageBySecond * dt;
       if (_fuel < 0) {
@@ -206,25 +207,17 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
       }
     }
     //Max speed is equal to two grid cells
-    final maxSpeed = gameRef.size.clone()
-      ..divide(MapComponent.grid)
-      ..scale(2)
-      ..divide(Vector2.all(speed));
-
-    body.linearVelocity.clamp(
-      maxSpeed.scaled(-1),
-      maxSpeed,
-    );
+    //TODO cap this before we reache the cap of forge
   }
 
   @override
-  void render(Canvas canvas) {
-    ///If we lost we dont show the rocket anymore
-    if (GameState.playState == PlayingState.lost) return;
-    super.render(canvas);
-    if (gameRef.debugMode) {
-      debugTextPaint.render(canvas, 'Fuel:$fuel', Vector2(size.x, 0));
-    }
+  // TODO: implement debugMode
+  bool get debugMode => true;
+
+  @override
+  void renderDebugMode(Canvas canvas) {
+    // TODO: implement renderDebugMode
+    super.renderDebugMode(canvas);
   }
 
   @override
@@ -247,7 +240,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
     }
     _updateVelocity(dt);
 
-    final worldBounds = gameRef.camera.worldBounds!;
+/*    final worldBounds = gameRef.camera.worldBounds!;
     final nextPosition = position + body.linearVelocity;
 
     // Check if the next position is within the world bounds on the X axis.
@@ -264,7 +257,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
     // If it is we set the position to it, otherwise we set velocity to 0.
     if (nextPosition.y + size.y <= worldBounds.bottom) {
       position.y = nextPosition.y;
-    }
+    }*/
 
     _animationTime += dt;
     if (_animationTime >= _animationSpeed) {
@@ -319,7 +312,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
 
   /// Restart the rocket.
   void reset() {
-    position = gameRef.size / 2;
+    body.setTransform(Vector2(gameRef.size.x / 2, -gameRef.size.y / 2), 0);
     _collisionActive = false;
     body.linearVelocity.scale(0);
     current = RocketState.idle;
@@ -336,9 +329,6 @@ class _RocketComponent extends SpriteAnimationGroupComponent<RocketState>
     required Vector2 position,
     required Vector2 size,
   }) : super(position: position, size: size, animations: {});
-
-  ///Acceleration factor of the rocket
-  final speed = 5;
 
   @override
   Future<void> onLoad() async {
@@ -368,5 +358,12 @@ class _RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       RocketState.farRight: farRight
     };
     current = RocketState.idle;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    ///If we lost we dont show the rocket anymore
+    if (GameState.playState == PlayingState.lost) return;
+    // super.render(canvas);
   }
 }

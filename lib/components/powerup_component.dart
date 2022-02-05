@@ -49,6 +49,7 @@ abstract class PowerupComponent extends SpriteComponent
     sprite = await gameRef.loadSprite(getPowerupSprite());
     anchor = Anchor.center;
     addHitbox(HitboxCircle(normalizedRadius: 0.9));
+    size = size / gameRef.camera.zoom;
     return super.onLoad();
   }
 

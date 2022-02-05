@@ -14,7 +14,7 @@ class ExplosionComponent extends SpriteAnimationComponent
 
   @override
   Future<void>? onLoad() async {
-    size = Vector2(128, 80);
+    size = Vector2(12.8, 8.0);
     position.sub(Vector2(size.x / 2, size.y / 2));
     animation = await SpriteAnimation.load(
       'explosion-3.png',

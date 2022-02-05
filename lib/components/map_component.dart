@@ -42,12 +42,13 @@ class MapComponent extends Component with HasGameRef<MoonlanderGame> {
     );
 
     // Set the world bounds to the max size of the map.
-    gameRef.camera.worldBounds = Rect.fromLTWH(
+    /*gameRef.camera.worldBounds = Rect.fromLTWH(
       0,
       0,
       lengthOfMap * itemSize.x,
       grid.y * itemSize.y,
     );
+    */
   }
 
   @override

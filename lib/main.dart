@@ -79,10 +79,14 @@ class MoonlanderGame extends Forge2DGame
         HasTappables,
         HasKeyboardHandlerComponents,
         HasDraggables {
+  MoonlanderGame() : super(gravity: Vector2(0, -2.5), zoom: 10);
+
   ///Interface to play audio
   late final MoonLanderAudioPlayer audioPlayer;
 
   late final RocketComponent _rocket;
+  JoystickComponent? _joystickComponent;
+  RocketInfo? _rocketInfo;
 
   ///The rocket component currnetly in the game
   RocketComponent get rocket => _rocket;
@@ -121,6 +125,17 @@ class MoonlanderGame extends Forge2DGame
   }
 
   @override
+  void onGameResize(Vector2 canvasSize) {
+    super.onGameResize(canvasSize);
+    if (_joystickComponent != null) {
+      _joystickComponent!.position = Vector2(40, canvasSize.y.abs() - 50);
+    }
+    if (_rocketInfo != null) {
+      _rocketInfo!.resize();
+    }
+  }
+
+  @override
   Future<void> onLoad() async {
     final image = await images.load('joystick.png');
     final sheet = SpriteSheet.fromColumnsAndRows(
@@ -128,8 +143,7 @@ class MoonlanderGame extends Forge2DGame
       columns: 6,
       rows: 1,
     );
-    camera.viewport = FixedVerticalResolutionViewport(800);
-    camera.zoom = 1;
+    //camera.viewport = FixedVerticalResolutionViewport(800);
     //Init and load the audio assets
     audioPlayer = MoonLanderAudioPlayer();
     await audioPlayer.loadAssets();
@@ -137,9 +151,10 @@ class MoonlanderGame extends Forge2DGame
     ///Ensure our joystick knob is between 50 and 100 based on view height
     ///Important its based on device size not viewport size
     ///8.2 is the "magic" hud joystick factor... ;)
-    final knobSize = min(max(50, size.y / 8.2), 100).toDouble();
+    final screenSize = camera.worldToScreen(size);
+    final knobSize = min(max(50, screenSize.y / 8.2), 100).toDouble();
 
-    final joystick = JoystickComponent(
+    _joystickComponent = JoystickComponent(
       knob: SpriteComponent(
         sprite: sheet.getSpriteById(1),
         size: Vector2.all(knobSize),
@@ -148,20 +163,22 @@ class MoonlanderGame extends Forge2DGame
         sprite: sheet.getSpriteById(0),
         size: Vector2.all(knobSize * 1.5),
       ),
-      margin: const EdgeInsets.only(left: 10, bottom: 10),
+      //margin: const EdgeInsets.only(left: 10, bottom: 1),
+      position: Vector2(40, screenSize.y.abs() - 50),
     );
     _rocket = RocketComponent(
       position: Vector2(size.x / 2, -size.y / 2),
-      size: Vector2(32, 48),
-      joystick: joystick,
+      size: Vector2(3.2, 4.8),
+      joystick: _joystickComponent!,
     );
 
     camera.followComponent(_rocket.positionComponent!);
     await add(_rocket);
-    await add(joystick);
+    await add(_joystickComponent!);
     children.register<MapComponent>();
     await add(MapComponent(mapSeed: GameState.seed.hashCode));
-    await add(RocketInfo(_rocket));
+    _rocketInfo = RocketInfo(_rocket);
+    await add(_rocketInfo!);
 
     await add(
       PauseComponent(
