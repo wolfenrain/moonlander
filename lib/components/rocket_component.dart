@@ -364,6 +364,6 @@ class _RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   void render(Canvas canvas) {
     ///If we lost we dont show the rocket anymore
     if (GameState.playState == PlayingState.lost) return;
-    // super.render(canvas);
+    super.render(canvas);
   }
 }
