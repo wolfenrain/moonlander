@@ -16,7 +16,6 @@ import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
-import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/widgets/enter_seed.dart';
 import 'package:moonlander/widgets/highscore.dart';
@@ -171,8 +170,6 @@ class MoonlanderGame extends Forge2DGame
       size: Vector2(3.2, 4.8),
       joystick: _joystickComponent!,
     );
-
-    camera.followComponent(_rocket.positionComponent!);
     await add(_rocket);
     await add(_joystickComponent!);
     children.register<MapComponent>();

@@ -5,7 +5,9 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flame_forge2d/position_body_component.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/components/explosion_component.dart';
@@ -49,16 +51,17 @@ enum RocketHeading {
 }
 
 /// Component that keeps track of our rocket body.
-class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
+class RocketComponent extends BodyComponent<MoonlanderGame> {
+  late final _RocketComponent positionComponent;
+  Vector2 position;
+  Vector2 size;
+
   /// Create a new Rocket component at the given [position].
   RocketComponent({
-    required Vector2 position,
-    required Vector2 size,
+    required this.position,
+    required this.size,
     required this.joystick,
-  }) : super(
-          positionComponent: _RocketComponent(position: position, size: size),
-          size: size,
-        );
+  });
 
   /// Joystick that controls this rocket.
   final JoystickComponent joystick;
@@ -79,15 +82,9 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   final double speed = 0.1;
 
   /// Wrapper around the rocket state for rendering.
-  RocketState? get current => (positionComponent! as _RocketComponent).current;
+  RocketState? get current => positionComponent.current;
   set current(RocketState? state) {
-    (positionComponent! as _RocketComponent).current = state;
-  }
-
-  /// Wrapper around the position of the rocket.
-  Vector2 get position => (positionComponent! as _RocketComponent).position;
-  set position(Vector2 position) {
-    (positionComponent! as _RocketComponent).position = position;
+    positionComponent.current = state;
   }
 
   ///Fuel remaning
@@ -101,7 +98,11 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    positionComponent = _RocketComponent(position: Vector2.zero(), size: size);
+    positionComponent.anchor = Anchor.center;
+    children.add(positionComponent);
     _particelOffset = Vector2(0, size.y * 0.2);
+    camera.followVector2(body.position);
   }
 
   @override
@@ -181,7 +182,8 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
   void _createEngineParticels() {
     gameRef.add(
       ParticelGenerator.createEngineParticle(
-        position: position.clone()..add(_particelOffset),
+        position: Vector2(body.position.x, -1 * body.position.y)
+          ..add(_particelOffset),
       ),
     );
   }
@@ -212,7 +214,7 @@ class RocketComponent extends PositionBodyComponent<MoonlanderGame> {
 
   @override
   // TODO: implement debugMode
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   @override
   void renderDebugMode(Canvas canvas) {
