@@ -102,7 +102,7 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
     positionComponent.anchor = Anchor.center;
     children.add(positionComponent);
     _particelOffset = Vector2(0, size.y * 0.2);
-    camera.followVector2(body.position);
+    //camera.followVector2(body.position);
   }
 
   @override
