@@ -303,7 +303,8 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
     GameState.playState = PlayingState.lost;
     gameRef.add(
       ExplosionComponent(
-        position.clone()
+        body.position.clone()
+          ..multiply(Vector2(1, -1))
           ..add(
             Vector2(size.x / 2, 0),
           ),
