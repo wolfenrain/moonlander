@@ -1,11 +1,13 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/geometry.dart';
+import 'package:flame_forge2d/body_component.dart';
+import 'package:flame_forge2d/contact_callbacks.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:moonlander/components/powerup_physics_base.dart';
 import 'package:moonlander/components/rocket_component.dart';
 
 ///A power up that gets collected on contact
-abstract class PowerupComponent extends SpriteComponent
-    with HasGameRef, HasHitboxes, Collidable {
+abstract class PowerupComponent extends SpriteComponent with HasGameRef {
   ///Create a power up at the given position
   PowerupComponent({
     required Vector2 position,
@@ -44,12 +46,19 @@ abstract class PowerupComponent extends SpriteComponent
   ///What should happen if the player touches the element
   void onPlayerContact(RocketComponent player);
 
+  ///How to represnet the powerup in the physics world
+  ///Default is a sensor to detect collisions override this if needed
+
+  BasicPhysicsPowerup createPhysicsObject() {
+    return BasicPhysicsPowerup(position.clone(), size, this);
+  }
+
   @override
   Future<void>? onLoad() async {
     sprite = await gameRef.loadSprite(getPowerupSprite());
     anchor = Anchor.center;
-    addHitbox(HitboxCircle(normalizedRadius: 0.9));
     size = size / gameRef.camera.zoom;
+    await gameRef.add(createPhysicsObject());
     return super.onLoad();
   }
 
@@ -57,14 +66,5 @@ abstract class PowerupComponent extends SpriteComponent
   void update(double dt) {
     angle += radians(_roationBySecond * dt);
     super.update(dt);
-  }
-
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (_used) return;
-    if (other is RocketComponent) {
-      // onPlayerContact(other);
-      used = true;
-    }
   }
 }

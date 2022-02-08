@@ -34,9 +34,11 @@ class RocketInfo extends PositionComponent with HasGameRef {
 
   ///Set the size and position based on text and screen
   void resize() {
-    final textSize = _textRenderer.measureText('Fuel: 100 % \n'
-        'Vertical speed: -99.00\n'
-        'Horizontal speed: -99.00');
+    final textSize = _textRenderer.measureText(
+      'Fuel: 100 % \n'
+      'Vertical speed: -99.00\n'
+      'Horizontal speed: -99.00',
+    );
     size = textSize;
     final screenSize = gameRef.canvasSize;
     position = Vector2(screenSize.x / 2 - size.x / 2, textSize.y / 3);

@@ -1,18 +1,13 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flame_forge2d/forge2d_game.dart';
-import 'package:flame_forge2d/position_body_component.dart';
-import 'package:flutter/material.dart';
 import 'package:moonlander/components/explosion_component.dart';
 import 'package:moonlander/components/line_component.dart';
-import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/particel_generator.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/main.dart';
@@ -107,16 +102,17 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
 
   @override
   Body createBody() {
+    debugMode = false; //prevent debug drawing
     final shape = CircleShape()..radius = size.x / 2;
     final fixtureDef = FixtureDef(shape)
-      ..userData = this // To be able to determine object in collision
       ..restitution = 0.8
       ..density = 1.0
       ..friction = 0.2;
 
     final bodyDef = BodyDef()
       ..position = position.clone()
-      ..type = BodyType.dynamic;
+      ..type = BodyType.dynamic
+      ..userData = this;
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
 
@@ -210,16 +206,6 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
     }
     //Max speed is equal to two grid cells
     //TODO cap this before we reache the cap of forge
-  }
-
-  @override
-  // TODO: implement debugMode
-  bool get debugMode => false;
-
-  @override
-  void renderDebugMode(Canvas canvas) {
-    // TODO: implement renderDebugMode
-    super.renderDebugMode(canvas);
   }
 
   @override
