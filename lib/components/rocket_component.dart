@@ -102,7 +102,7 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
 
   @override
   Body createBody() {
-    debugMode = false; //prevent debug drawing
+    // debugMode = false; //prevent debug drawing
     final shape = CircleShape()..radius = size.x / 2;
     final fixtureDef = FixtureDef(shape)
       ..restitution = 0.8

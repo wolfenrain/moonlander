@@ -1,8 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame_forge2d/body_component.dart';
-import 'package:flame_forge2d/contact_callbacks.dart';
-import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:moonlander/components/powerup_physics_base.dart';
 import 'package:moonlander/components/rocket_component.dart';
 

@@ -47,7 +47,7 @@ class TerrainGenerator {
   late final Random _random;
 
   /// Generate list of points that represent the terrain.
-  List<PositionComponent> generate(
+  List<Component> generate(
     Vector2 itemSize,
     Vector2 gamzeSize,
   ) {

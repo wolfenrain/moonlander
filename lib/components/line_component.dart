@@ -3,7 +3,10 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
+import 'package:flame_forge2d/body_component.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
+import 'package:forge2d/src/dynamics/body.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/main.dart';
 
@@ -14,8 +17,7 @@ final linePaint = Paint()..color = Colors.white;
 final goalPaint = Paint()..color = Colors.lightBlue;
 
 /// A single line component that is collidable. Part of a [MapComponent].
-class LineComponent extends PositionComponent
-    with HasHitboxes, Collidable, HasGameRef<MoonlanderGame> {
+class LineComponent extends BodyComponent {
   /// Construct the line with given positions.
   LineComponent(
     this.startPos,
@@ -23,9 +25,38 @@ class LineComponent extends PositionComponent
     this.isGoal = false,
   });
 
+  @override
+  Body createBody() {
+    debugMode = false; //prevent debug drawing
+    final startPosition = convert(startPos);
+    final endPosition = convert(endPos);
+
+    final distance = endPosition.distanceTo(startPosition) / 2;
+
+    final shape = PolygonShape()
+      ..setAsBox(
+        distance,
+        .2,
+        Vector2(distance, .2),
+        0,
+      );
+
+    final fixtureDef = FixtureDef(shape);
+
+    final bodyDef = BodyDef()
+      ..position = startPosition
+      ..type = BodyType.static
+      ..angle = atan2(
+        endPosition.y - startPosition.y,
+        endPosition.x - startPosition.x,
+      )
+      ..userData = this;
+    return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+
   final _textPaint = TextPaint(
     style: TextStyle(
-      fontSize: 12,
+      fontSize: 2,
       color: Colors.grey[700],
       fontFamily: 'AldotheApache',
     ),
@@ -69,7 +100,7 @@ class LineComponent extends PositionComponent
 
     return Vector2(
       itemSize.x * point.x,
-      gameRef.size.y - itemSize.y * point.y,
+      -gameRef.size.y + (itemSize.y * point.y),
     );
   }
 
@@ -77,37 +108,28 @@ class LineComponent extends PositionComponent
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // Ensures that lines wont trigger collisions with each other.
-    collidableType = CollidableType.passive;
+    paint = isGoal ? goalPaint : paint;
 
     // Register a query of its siblings for performance reasons.
     parent?.children.register<LineComponent>();
     parent?.children.query<LineComponent>();
-
-    addHitbox(HitboxRectangle());
-  }
-
-  @override
-  void onGameResize(Vector2 gameSize) {
-    final startPosition = convert(startPos);
-    final endPosition = convert(endPos);
-    position = startPosition;
-    angle = atan2(
-      endPosition.y - startPosition.y,
-      endPosition.x - startPosition.x,
-    );
-    size = Vector2(endPosition.distanceTo(startPosition), 1);
-
-    super.onGameResize(gameSize);
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    canvas.drawLine(
-      Offset.zero,
-      size.toOffset(),
-      isGoal ? goalPaint : linePaint,
+    final polygon = body.fixtures.first.shape as PolygonShape;
+
+    renderPolygon(
+      canvas,
+      polygon.vertices.map((v) => v.toOffset()).toList(growable: false),
+    );
+
+    // I do debug
+    canvas.drawCircle(
+      polygon.centroid.toOffset(),
+      .2,
+      Paint()..color = Colors.red,
     );
 
     if (isGoal) {
@@ -119,7 +141,7 @@ class LineComponent extends PositionComponent
         '+$score',
         Vector2(
           _textPaint.measureTextWidth('+$score'),
-          -_textPaint.measureTextHeight('+$score') - 5,
+          -_textPaint.measureTextHeight('+$score') - 1,
         ),
         anchor: Anchor.topCenter,
       );
