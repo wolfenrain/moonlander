@@ -193,7 +193,7 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
       body.applyLinearImpulse(joyStickDelta * speed);
       _fuel -= _fuelUsageBySecond * dt;
       if (_fuel < 0) {
-        _loose();
+        loose();
       } else {
         _createEngineParticels();
         if (_engineSoundCounter >= _engineSoundCoolDown) {
@@ -254,7 +254,8 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
     }
   }
 
-  void _win(LineComponent landingSpot) {
+  /// The rocket landed on the goal line.
+  void win(LineComponent landingSpot) {
     _calculateScore(landingSpot);
     body.linearVelocity.scale(0);
     _collisionActive = true;
@@ -281,7 +282,8 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
             _flyingTime;
   }
 
-  void _loose() {
+  /// Called when game is lost, either through crash or fuel depletion.
+  void loose() {
     body.linearVelocity.scale(0); // Stop any movement
     _collisionActive = true;
     current = RocketState.idle;

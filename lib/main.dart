@@ -13,13 +13,12 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:moonlander/components/audio_player.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
-import 'package:moonlander/components/powerup_component.dart';
-import 'package:moonlander/components/powerup_fuel_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
 import 'package:moonlander/game_state.dart';
-import 'package:moonlander/physics/rocketPowerUpContactCallback.dart';
+import 'package:moonlander/physics/rocket_line_contact_callback.dart';
+import 'package:moonlander/physics/rocket_power_up_contact_callback.dart';
 import 'package:moonlander/widgets/enter_seed.dart';
 import 'package:moonlander/widgets/highscore.dart';
 import 'package:moonlander/widgets/levels.dart';
@@ -151,6 +150,7 @@ class MoonlanderGame extends Forge2DGame
     await audioPlayer.loadAssets();
     //Register the collision callback for physics objects
     addContactCallback(RocketPowerUpContactCallback());
+    addContactCallback(RocketLineContactCallback());
 
     ///Ensure our joystick knob is between 50 and 100 based on view height
     ///Important its based on device size not viewport size
