@@ -15,6 +15,15 @@ class RocketLineContactCallback
   void begin(RocketComponent a, LineComponent b, Contact contact) {
     _contactCounter = 1;
     _totalImpactImpulse = 0;
+    final worldContact = WorldManifold();
+    contact.getWorldManifold(worldContact);
+    /*
+    print('Local points: ${contact.manifold.localPoint}');
+    print('World points: ${worldContact.points}');
+    final rocket = a.body.linearVelocityFromWorldPoint(worldContact.points[0]);
+    final line = b.body.linearVelocityFromWorldPoint(worldContact.points[0]);
+    final impactVelocity = rocket - line;
+    */
   }
 
   @override
@@ -24,11 +33,9 @@ class RocketLineContactCallback
     Contact contact,
     ContactImpulse impulse,
   ) {
-    if (contact.isTouching()) {
-      // The impact impules of the two bodies.
-      _totalImpactImpulse += impulse.normalImpulses[0].abs();
-      _contactCounter++;
-    }
+    // The impact impules of the two bodies.
+    _totalImpactImpulse += impulse.normalImpulses[0].abs();
+    _contactCounter++;
   }
 
   @override
