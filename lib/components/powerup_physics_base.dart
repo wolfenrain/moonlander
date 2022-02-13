@@ -2,15 +2,15 @@ import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:moonlander/components/powerup_component.dart';
 
-///Basic representation of the powerup in the phyiscs wolrd
+/// Basic representation of the powerup in the phyiscs wolrd.
 class BasicPhysicsPowerup extends BodyComponent {
-  ///Position and size of the power up
+  /// Position and size of the power up.
   BasicPhysicsPowerup(this._position, this._size, this.powerupComponent);
 
   final Vector2 _position;
   final Vector2 _size;
 
-  ///Triggered by the ContactCallback on collision
+  /// Triggered by the ContactCallback on collision.
   final PowerupComponent powerupComponent;
 
   @override
