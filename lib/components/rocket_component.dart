@@ -102,8 +102,10 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
 
   @override
   Body createBody() {
-    // debugMode = false; //prevent debug drawing
-    final shape = CircleShape()..radius = size.x / 2;
+    debugMode = false; //prevent debug drawing
+
+    final shape = PolygonShape();
+    shape.setAsBoxXY(size.x / 2, (size.y / 2) * 0.3);
     final fixtureDef = FixtureDef(shape)
       ..restitution = 0.8
       ..density = 1.0
@@ -255,8 +257,8 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
   }
 
   /// The rocket landed on the goal line.
-  void win(LineComponent landingSpot) {
-    _calculateScore(landingSpot);
+  void win(LineComponent landingSpot, double impactImpulse) {
+    _calculateScore(landingSpot, impactImpulse);
     body.linearVelocity.scale(0);
     _collisionActive = true;
     current = RocketState.idle;
@@ -274,12 +276,11 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
         .createNewHighScoreEntry(GameState.seed, GameState.lastScore);
   }
 
-  void _calculateScore(LineComponent landingSpot) {
+  void _calculateScore(LineComponent landingSpot, double impactImpulse) {
     final landingSpotScore = landingSpot.score;
-
+    final safeImpulse = max(impactImpulse, 0.1);
     GameState.lastScore =
-        (fuel * (body.linearVelocity.y.abs() * speed) * landingSpotScore) ~/
-            _flyingTime;
+        (fuel * (fuel / safeImpulse) * landingSpotScore) ~/ _flyingTime;
   }
 
   /// Called when game is lost, either through crash or fuel depletion.
@@ -287,7 +288,6 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
     body.linearVelocity.scale(0); // Stop any movement
     _collisionActive = true;
     current = RocketState.idle;
-    // For now you can only lose
     GameState.playState = PlayingState.lost;
     gameRef.add(
       ExplosionComponent(
@@ -306,6 +306,7 @@ class RocketComponent extends BodyComponent<MoonlanderGame> {
     body.setTransform(Vector2(gameRef.size.x / 2, -gameRef.size.y / 2), 0);
     _collisionActive = false;
     body.linearVelocity.scale(0);
+    body.angularVelocity = 0;
     current = RocketState.idle;
     _fuel = 100;
     _flyingTime = 0;
