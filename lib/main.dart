@@ -16,6 +16,7 @@ import 'package:moonlander/components/pause_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
+import 'package:moonlander/fixed_vertical_resolution_viewport.dart';
 import 'package:moonlander/game_state.dart';
 import 'package:moonlander/physics/rocket_line_contact_callback.dart';
 import 'package:moonlander/physics/rocket_power_up_contact_callback.dart';
@@ -75,26 +76,27 @@ Future<void> main() async {
 
 /// This class encapulates the whole game.
 class MoonlanderGame extends Forge2DGame
-    with
-        HasCollidables,
-        HasTappables,
-        HasKeyboardHandlerComponents,
-        HasDraggables {
+    with HasTappables, HasKeyboardHandlerComponents, HasDraggables {
   MoonlanderGame() : super(gravity: Vector2(0, -2.5), zoom: 10);
 
-  ///Interface to play audio
+  /// Interface to play audio.
   late final MoonLanderAudioPlayer audioPlayer;
 
   late final RocketComponent _rocket;
   JoystickComponent? _joystickComponent;
   RocketInfo? _rocketInfo;
 
-  ///The rocket component currnetly in the game
+  /// The rocket component currnetly in the game.
   RocketComponent get rocket => _rocket;
 
   /// Depending on the active overlay state we turn of the engine or not.
   void onOverlayChanged() {
     if (overlays.value.isNotEmpty) {
+      if (GameState.playState != PlayingState.paused) {
+        if (world.contactManager.contacts.isNotEmpty) {
+          world.contactManager.contacts.clear();
+        }
+      }
       pauseEngine();
     } else {
       resumeEngine();
@@ -129,7 +131,8 @@ class MoonlanderGame extends Forge2DGame
   void onGameResize(Vector2 canvasSize) {
     super.onGameResize(canvasSize);
     if (_joystickComponent != null) {
-      _joystickComponent!.position = Vector2(40, canvasSize.y.abs() - 50);
+      final screenSize = camera.worldToScreen(size);
+      _joystickComponent!.position = Vector2(40, screenSize.y.abs() - 50);
     }
     if (_rocketInfo != null) {
       _rocketInfo!.resize();
@@ -144,17 +147,17 @@ class MoonlanderGame extends Forge2DGame
       columns: 6,
       rows: 1,
     );
-    //camera.viewport = FixedVerticalResolutionViewport(800);
-    //Init and load the audio assets
+    camera.viewport = FixedVerticalResolutionViewport(800);
+    // Init and load the audio assets
     audioPlayer = MoonLanderAudioPlayer();
     await audioPlayer.loadAssets();
-    //Register the collision callback for physics objects
+    // Register the collision callback for physics objects
     addContactCallback(RocketPowerUpContactCallback());
     addContactCallback(RocketLineContactCallback());
 
-    ///Ensure our joystick knob is between 50 and 100 based on view height
-    ///Important its based on device size not viewport size
-    ///8.2 is the "magic" hud joystick factor... ;)
+    // Ensure our joystick knob is between 50 and 100 based on view height
+    // Important its based on device size not viewport size
+    // 8.2 is the "magic" hud joystick factor... ;)
     final screenSize = camera.worldToScreen(size);
     final knobSize = min(max(50, screenSize.y / 8.2), 100).toDouble();
 
@@ -167,7 +170,6 @@ class MoonlanderGame extends Forge2DGame
         sprite: sheet.getSpriteById(0),
         size: Vector2.all(knobSize * 1.5),
       ),
-      //margin: const EdgeInsets.only(left: 10, bottom: 1),
       position: Vector2(40, screenSize.y.abs() - 50),
     );
     _rocket = RocketComponent(
@@ -198,6 +200,9 @@ class MoonlanderGame extends Forge2DGame
             overlays.remove('pause');
             if (GameState.playState == PlayingState.paused) {
               GameState.playState = PlayingState.playing;
+            } else if (GameState.playState == PlayingState.lost ||
+                GameState.playState == PlayingState.won) {
+              restart();
             }
           } else {
             if (GameState.playState == PlayingState.playing) {
@@ -213,7 +218,7 @@ class MoonlanderGame extends Forge2DGame
     return super.onLoad();
   }
 
-  ///Load the level based on the given seed
+  /// Load the level based on the given seed.
   Future<void> loadLevel(String seed) async {
     restart();
     GameState.seed = seed;
