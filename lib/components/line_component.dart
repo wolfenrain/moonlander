@@ -2,13 +2,10 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame_forge2d/body_component.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
-import 'package:forge2d/src/dynamics/body.dart';
 import 'package:moonlander/components/map_component.dart';
-import 'package:moonlander/main.dart';
 
 /// Paint object for when it should be a normal line.
 final linePaint = Paint()..color = Colors.white;
@@ -104,6 +101,8 @@ class LineComponent extends BodyComponent {
     );
   }
 
+  final Matrix4 _flipYTransform = Matrix4.identity()..scale(1.0, -1);
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -118,24 +117,12 @@ class LineComponent extends BodyComponent {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    final polygon = body.fixtures.first.shape as PolygonShape;
-
-    renderPolygon(
-      canvas,
-      polygon.vertices.map((v) => v.toOffset()).toList(growable: false),
-    );
-
-    // I do debug
-    canvas.drawCircle(
-      polygon.centroid.toOffset(),
-      .2,
-      Paint()..color = Colors.red,
-    );
-
+    renderDebugMode(canvas);
     if (isGoal) {
       canvas
         ..save()
-        ..rotate(-angle);
+        ..rotate(-angle)
+        ..transform(_flipYTransform.storage);
       _textPaint.render(
         canvas,
         '+$score',
