@@ -79,7 +79,10 @@ class _PauseMenuState extends State<PauseMenu> {
                 if (GameState.playState == PlayingState.paused)
                   _getButton(
                     'Resume',
-                    () => widget.game.overlays.remove('pause'),
+                    () {
+                      GameState.playState = PlayingState.playing;
+                      widget.game.overlays.remove('pause');
+                    },
                   ),
                 _getButton(
                   'Restart',
