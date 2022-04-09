@@ -196,7 +196,7 @@ class MoonlanderGame extends FlameGame
   Future<void> loadLevel(String seed) async {
     restart();
     GameState.seed = seed;
-    children.removeAll(children.query<MapComponent>());
+    removeAll(children.query<MapComponent>());
     await add(MapComponent(mapSeed: seed.hashCode));
     _removeAnyOverlay();
   }
