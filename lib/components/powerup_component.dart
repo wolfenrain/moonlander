@@ -1,11 +1,11 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/geometry.dart';
 import 'package:moonlander/components/rocket_component.dart';
 
 ///A power up that gets collected on contact
 abstract class PowerupComponent extends SpriteComponent
-    with HasGameRef, HasHitboxes, Collidable {
+    with HasGameRef, CollisionCallbacks {
   ///Create a power up at the given position
   PowerupComponent({
     required Vector2 position,
@@ -48,7 +48,7 @@ abstract class PowerupComponent extends SpriteComponent
   Future<void>? onLoad() async {
     sprite = await gameRef.loadSprite(getPowerupSprite());
     anchor = Anchor.center;
-    addHitbox(HitboxCircle(normalizedRadius: 0.9));
+    await add(CircleHitbox(radius: 0.9 * size.x / 2));
     return super.onLoad();
   }
 
@@ -59,11 +59,13 @@ abstract class PowerupComponent extends SpriteComponent
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (_used) return;
-    if (other is RocketComponent) {
-      onPlayerContact(other);
-      used = true;
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (_used == false) {
+      if (other is RocketComponent) {
+        onPlayerContact(other);
+        used = true;
+      }
     }
+    super.onCollision(intersectionPoints, other);
   }
 }

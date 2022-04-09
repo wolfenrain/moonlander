@@ -1,8 +1,8 @@
 import 'dart:math';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/geometry.dart';
 import 'package:flutter/material.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/main.dart';
@@ -14,8 +14,7 @@ final linePaint = Paint()..color = Colors.white;
 final goalPaint = Paint()..color = Colors.lightBlue;
 
 /// A single line component that is collidable. Part of a [MapComponent].
-class LineComponent extends PositionComponent
-    with HasHitboxes, Collidable, HasGameRef<MoonlanderGame> {
+class LineComponent extends PositionComponent with HasGameRef<MoonlanderGame> {
   /// Construct the line with given positions.
   LineComponent(
     this.startPos,
@@ -77,14 +76,11 @@ class LineComponent extends PositionComponent
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // Ensures that lines wont trigger collisions with each other.
-    collidableType = CollidableType.passive;
-
     // Register a query of its siblings for performance reasons.
     parent?.children.register<LineComponent>();
     parent?.children.query<LineComponent>();
-
-    addHitbox(HitboxRectangle());
+    // Ensures that lines wont trigger collisions with each other.
+    await add(RectangleHitbox()..collisionType = CollisionType.passive);
   }
 
   @override

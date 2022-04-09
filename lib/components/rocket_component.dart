@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/geometry.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -48,7 +48,7 @@ enum RocketHeading {
 
 /// A component that renders the Rocket with the different states.
 class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
-    with HasHitboxes, Collidable, HasGameRef<MoonlanderGame> {
+    with CollisionCallbacks, HasGameRef<MoonlanderGame> {
   /// Create a new Rocket component at the given [position].
   RocketComponent({
     required Vector2 position,
@@ -115,7 +115,12 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
       RocketState.farRight: farRight
     };
     current = RocketState.idle;
-    addHitbox(HitboxRectangle(relation: Vector2(0.95, 0.5)));
+    await add(
+      RectangleHitbox.relative(
+        Vector2(0.95, 0.7),
+        parentSize: size,
+      ),
+    );
     _particelOffset = Vector2(size.x * 0.4, size.y * 0.8);
   }
 
@@ -277,18 +282,17 @@ class RocketComponent extends SpriteAnimationGroupComponent<RocketState>
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (_collisionActive) {
       return;
     }
     var crashed = true;
     if (other is LineComponent) {
-      final hitBox = hitboxes.first;
-
+      final hitBox = children.first as RectangleHitbox;
       for (final point in intersectionPoints) {
         // Calculate which side of the hitbox had the collision
         final vectorUp = Vector2(0, -1)
-          ..rotate(hitBox.parentAngle)
+          ..rotate(hitBox.angle)
           ..normalize();
         final relativeIntersectionPoint =
             (point - hitBox.position).normalized();

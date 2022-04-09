@@ -187,9 +187,10 @@ class HighscoreCompanion extends UpdateCompanion<HighscoreData> {
 
 class $HighscoreTable extends Highscore
     with TableInfo<$HighscoreTable, HighscoreData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $HighscoreTable(this._db, [this._alias]);
+  $HighscoreTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
@@ -258,7 +259,7 @@ class $HighscoreTable extends Highscore
 
   @override
   $HighscoreTable createAlias(String alias) {
-    return $HighscoreTable(_db, alias);
+    return $HighscoreTable(attachedDatabase, alias);
   }
 }
 
@@ -411,9 +412,10 @@ class LevelCompanion extends UpdateCompanion<LevelData> {
 }
 
 class $LevelTable extends Level with TableInfo<$LevelTable, LevelData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $LevelTable(this._db, [this._alias]);
+  $LevelTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
@@ -468,7 +470,7 @@ class $LevelTable extends Level with TableInfo<$LevelTable, LevelData> {
 
   @override
   $LevelTable createAlias(String alias) {
-    return $LevelTable(_db, alias);
+    return $LevelTable(attachedDatabase, alias);
   }
 }
 
@@ -488,7 +490,7 @@ abstract class _$MoonLanderDatabase extends GeneratedDatabase {
 
   Future<int> updateScoreForLevel(int? newHighscore, int levelId) {
     return customUpdate(
-      'UPDATE level SET highscore=:newHighscore WHERE id=:levelId',
+      'UPDATE level SET highscore=:newHighscore WHERE id=:levelId AND highscore <:newHighscore',
       variables: [Variable<int?>(newHighscore), Variable<int>(levelId)],
       updates: {level},
       updateKind: UpdateKind.update,

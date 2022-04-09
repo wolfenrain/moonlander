@@ -12,8 +12,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:moonlander/components/audio_player.dart';
 import 'package:moonlander/components/map_component.dart';
 import 'package:moonlander/components/pause_component.dart';
-import 'package:moonlander/components/powerup_component.dart';
-import 'package:moonlander/components/powerup_fuel_component.dart';
 import 'package:moonlander/components/rocket_component.dart';
 import 'package:moonlander/components/rocket_info.dart';
 import 'package:moonlander/database/shared.dart';
@@ -76,7 +74,7 @@ Future<void> main() async {
 /// This class encapulates the whole game.
 class MoonlanderGame extends FlameGame
     with
-        HasCollidables,
+        HasCollisionDetection,
         HasTappables,
         HasKeyboardHandlerComponents,
         HasDraggables {
